@@ -1,2 +1,3 @@
-# valkyrie
-desarrollo para el ciclo 3 programa mintic. grupo Valkyrie 
+# **Desarrollo del proyecto para el ciclo 3 del programa de mintic.** 
+## **Equipo Valkyrie** 
+---
