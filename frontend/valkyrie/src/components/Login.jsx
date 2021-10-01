@@ -3,7 +3,7 @@ import React from "react";
 function Login() {
   return (
     <div>
-      <h1 class="font-weight-light">Login</h1>
+      <h1 className="font-weight-light">Login</h1>
     </div>    
   );
 }

@@ -5,6 +5,9 @@ import BootstrapTable from "react-bootstrap-table-next";
 import cellEditFactory from "react-bootstrap-table2-editor";
 import paginationFactory from "react-bootstrap-table2-paginator";
 import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSave,  faTrashAlt, faPlusCircle, faWindowClose} from '@fortawesome/free-solid-svg-icons'
+import { Row, Col } from "reactstrap";
 
 import NewProduct from "../Form/NewProductForm";
 
@@ -48,7 +51,7 @@ export default function ProductsTable() {
     if (isNaN(newValue)) {
       return {
         valid: false,
-        message: "This field should be numeric"
+        message: "Este campo es numerico"
       };
     }
     return true;
@@ -85,15 +88,20 @@ export default function ProductsTable() {
       formatExtraData: state,
 
       formatter: (cellContent, row) => {
-        if(row.stateProduct==="disponible")
+        if(row.stateProduct.toLowerCase()==="disponible")
         return(
-          <div class="p-3 mb-2 bg-success text-white">Disponible</div>
+          <div className="status-p bg-success text-white">Disponible</div>
         );
       
-      else
+      else if(row.stateProduct.toLowerCase()==="no disponible")
         return(
-          <div class="p-3 mb-2 bg-danger text-white">No Disponible</div>
+          <span className="status-p bg-danger text-white">No Disponible</span>
         )
+      else
+      return(
+        <span className="status-p bg-warning text-white">{row.stateProduct}</span>
+      )
+       
         }
     },
     {
@@ -105,7 +113,7 @@ export default function ProductsTable() {
     },
     {
       dataField: "actions",
-      text: "Actions",
+      text: "Actiones",
       editable: false,
       isDummyField: true,
       formatExtraData: state,
@@ -117,20 +125,28 @@ export default function ProductsTable() {
           return (
             <div>
               <button
-                className="btn btn-secondary btn-xs"
+                className="btn btn-primary btn-xs"
                 onClick={() => {
+                  if(row.stateProduct.toLowerCase()!=="disponible" && row.stateProduct.toLowerCase()!=="no disponible"){
+                    return(
+                      alert("Estado incorrecto debe escoger entre disponible y no disponible")
+                    );}
+                    else{
                   setState(prev => {
+                    
+                    
                     row.state = null;
+                    
                     let newState = { ...prev, state: row.state, row: null };
                     alert("Producto actualizado correctamente.");
                     return newState;
-                  });
+                  });}
                 }}
-              >
-                Save
+              ><FontAwesomeIcon icon={faSave} />
+                
               </button>
               <button
-                className="btn btn-primary btn-xs"
+                className="btn btn-danger btn-xs box" 
                 onClick={() => {
                   setProducts(prev => {
                     let newVal = prev.map(el => {
@@ -148,7 +164,8 @@ export default function ProductsTable() {
                   });
                 }}
               >
-                Cancel
+                <FontAwesomeIcon icon={faWindowClose} />
+                
               </button>
             </div>
           );
@@ -159,8 +176,8 @@ export default function ProductsTable() {
                 className="btn btn-danger btn-xs"
                 onClick={() => handleDelete(row.id)}
               >
+                <FontAwesomeIcon icon={faTrashAlt} />
                 
-                Delete
               </button>
             </div>
           );
@@ -171,7 +188,7 @@ export default function ProductsTable() {
   const defaultSorted = [
     {
       dataField: "name",
-      order: "ascd"
+      order: "asc"
     }
   ];
 
@@ -189,8 +206,16 @@ export default function ProductsTable() {
   };
 
    const handleSaveAdd = (id, product, description, unitValue, stateProduct) => {
-         setProducts(prev => {
-        let newEntry = { ...entry, id: products.length+1, product:product, description:description, unit_value:unitValue, stateProduct:stateProduct };
+     
+    // check duplicated id
+     // eslint-disable-next-line no-loop-func
+     while (products.filter(el => el.id === id).length) {
+      // the same id is entered
+      id =id+1;
+    }    
+
+        setProducts(prev => {
+        let newEntry = { ...entry, id: id, product:product, description:description, unit_value:unitValue, stateProduct:stateProduct };
         let newVal = [newEntry, ...prev];
         alert("Producto registrado correctamente.");
         return newVal;
@@ -204,13 +229,18 @@ export default function ProductsTable() {
   };
   return (
     <>
-      <div style={{ textAlign: "left" }}>
-        <Button class="btn btn-warning" onClick={handleNewRow}>
-         Agregar Producto
+    <Row >
+      <Col> 
+      <div className="addProduct">
+        <Button variant="primary" onClick={handleNewRow}>
+        <FontAwesomeIcon icon={faPlusCircle} />
+           <span className="buttonText">Agregar Producto</span>
         </Button>
-      </div>
-
-      <ToolkitProvider
+      </div></Col>
+      </Row>
+<Row >
+  
+  <ToolkitProvider 
   keyField="id"
   data={ products }
   columns={ columns }
@@ -221,6 +251,7 @@ export default function ProductsTable() {
       <div>
         <SearchBar { ...props.searchProps } />
         <hr />
+        <div className="Card">
         <BootstrapTable
           { ...props.baseProps }
           
@@ -255,11 +286,15 @@ export default function ProductsTable() {
 
 
         />
-      </div>
+      </div></div>
     )
   }
 </ToolkitProvider>
-      
+
+
+
+</Row>
+<Row></Row>
 
 
 <NewProduct
