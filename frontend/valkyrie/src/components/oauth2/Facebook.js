@@ -17,13 +17,24 @@ export default class Facebook extends Component {
             name: response.name,
             picture: response.picture.data.url
         });
-        
     }
+
+    componentSalir = () => {
+       console.log('Facebook btn salir');
+      // alert('Evento on click')
+        this.setState({
+            auth: false,
+            name: '',
+            picture: ''
+        });
+    }
+
+
 
     componentClicked = () => {
-        console.log('Facebook btn clicked');
+       console.log('Facebook btn clicked');
+      
     }
-
     render(){
         let facebookData;
 
@@ -37,15 +48,23 @@ export default class Facebook extends Component {
                     color: '#000'
                 }}>
                     <img src={this.state.picture} alt={this.state.name} />
-                    <h2>Welcome {this.state.name}!</h2>
+                    <h2>Bienvenido {this.state.name}!</h2>
+                    <a href="#" onClick={this.componentSalir}>
+              Logout
+            </a>
                 </div>
             ) : 
             facebookData = (<FacebookLogin
                 appId="574582110524963"
-                autoLoad={true}
+                autoLoad={false}
                 fields="name,picture"
                 onClick={this.componentClicked}
-                callback={this.responseFacebook} />);
+                callback={this.responseFacebook}
+                textButton={"Iniciar Sesión con Facebook"}
+                
+                
+                
+                />);
 
         return (
             <>
