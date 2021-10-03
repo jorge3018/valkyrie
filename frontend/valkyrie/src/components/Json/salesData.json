@@ -1,0 +1,3 @@
+[
+    {"id":1,"sale":"Coca Cola", "description":"ventas Coca Cola", "value":2000, "quantity":2, "unitValue":1000, "date":"2/10/2021", "document":"venta.doc", "client":"Maria Arango", "seller":"David Diaz", "stateSale":"Entregado"}
+]
