@@ -34,7 +34,7 @@ export default function NewProductForm(props) {
       e.stopPropagation();
     }
     
-    if(description !==null && value !==null && product !==null){
+    if(description !==null && value !==null && product !==null && value >=50){
       setSend(true);
     }
     setValidated(true); 
@@ -84,15 +84,16 @@ export default function NewProductForm(props) {
           rows={3}
           onChange={e => setDescription(e.target.value)}
               />
-      </Form.Group>
+                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+       </Form.Group>
        </Row>
        <Row className="mb-1">
       <Form.Group as={Col} md="6" controlId="validationCustom05">
       <Form.Label> Valor Unitario: </Form.Label>
       <Form.Control name="unit_value"
-        type="number" placeholder="Valor Unitario" required onChange={e => setValue(e.target.value)} />
+        type="number" placeholder="Valor Unitario" min="50" required onChange={e => setValue(e.target.value)} />
           <Form.Control.Feedback type="invalid">
-            Por favor ingrese el valor unitario del producto.
+            Por favor ingrese un monto mayor a $50.
           </Form.Control.Feedback>      
               
               

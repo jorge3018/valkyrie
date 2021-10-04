@@ -1,10 +1,19 @@
 import React from "react";
 import ProductsTable from "./Table/ProductsTable";
+import { Row, Col } from "reactstrap";
 
 function Products() {
   return (
-    <div>
-      <h3>Catalogo de vendedores</h3>
+    <div className="Contenedor">
+      <Row className="Card">
+        <Col>
+        <h3>
+          <span className="header-title">Catálogo de productos</span>
+        </h3>
+        </Col>
+        
+      </Row>
+            
       <ProductsTable/>
     </div>
   );

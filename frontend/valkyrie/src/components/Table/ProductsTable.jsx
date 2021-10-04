@@ -10,7 +10,7 @@ import { faSave,  faTrashAlt, faPlusCircle, faWindowClose} from '@fortawesome/fr
 import { Row, Col } from "reactstrap";
 
 import NewProduct from "../Form/NewProductForm";
-
+import Alerta from "../Alerta";
 const key =  data.map(el => el.id);
 
 const { SearchBar } = Search;
@@ -32,11 +32,14 @@ export default function ProductsTable() {
     state: null,
     oldValue: null
   });
-
+  const [showAlert, setShowAlert] = useState(false);
   const [show,setShow] = useState(false);
   const handleShow = () => setShow(true);
   const handleClose = () => setShow(false);
-
+  const handleCloseAlert = () => setShowAlert(false);
+  const [mensaje, setMensaje] = useState("") 
+  const [title, setTitle] = useState("") 
+  const [variant, setVariant] = useState("") 
   const [products, setProducts] = useState( data); // transformers products
   
 
@@ -52,6 +55,17 @@ export default function ProductsTable() {
       return {
         valid: false,
         message: "Este campo es numerico"
+      };
+    }
+    return true;
+  };
+  // validator for number fields
+  
+  const stateValidator = (newValue, row, column) => {
+    if (newValue.toLowerCase()!=="disponible" && newValue.toLowerCase()!=="no disponible") {
+      return {
+        valid: false,
+        message: "Estado incorrecto debe escoger entre disponible y no disponible"
       };
     }
     return true;
@@ -84,7 +98,7 @@ export default function ProductsTable() {
       dataField: "stateProduct",
       text: "Estado",
       sort: true,
-      
+      validator: stateValidator,
       formatExtraData: state,
 
       formatter: (cellContent, row) => {
@@ -127,20 +141,23 @@ export default function ProductsTable() {
               <button
                 className="btn btn-primary btn-xs"
                 onClick={() => {
-                  if(row.stateProduct.toLowerCase()!=="disponible" && row.stateProduct.toLowerCase()!=="no disponible"){
-                    return(
-                      alert("Estado incorrecto debe escoger entre disponible y no disponible")
-                    );}
-                    else{
+                  
+                    
                   setState(prev => {
                     
                     
                     row.state = null;
                     
                     let newState = { ...prev, state: row.state, row: null };
-                    alert("Producto actualizado correctamente.");
+                    setTitle("El producto: "+row.product)
+                    setMensaje("Fue actualizado correctamente.")
+                    setVariant("success")
+                    setShowAlert(true);
+
+
+                    //alert("Producto actualizado correctamente.");
                     return newState;
-                  });}
+                  });
                 }}
               ><FontAwesomeIcon icon={faSave} />
                 
@@ -217,7 +234,11 @@ export default function ProductsTable() {
         setProducts(prev => {
         let newEntry = { ...entry, id: id, product:product, description:description, unit_value:unitValue, stateProduct:stateProduct };
         let newVal = [newEntry, ...prev];
-        alert("Producto registrado correctamente.");
+        setTitle("El producto: "+product)
+        setMensaje("Fue registrado correctamente.")
+                    setVariant("success")
+                    setShowAlert(true);
+        //alert("Producto registrado correctamente.");
         return newVal;
       });
       handleClose();
@@ -227,12 +248,20 @@ export default function ProductsTable() {
     handleShow();
     
   };
+  
   return (
     <>
     <Row >
+    <Alerta
+        show={showAlert}
+        onCancel={handleCloseAlert}
+        mensaje={mensaje}
+        variant={variant}
+        head={title}
+    />
       <Col> 
       <div className="addProduct">
-        <Button variant="primary" onClick={handleNewRow}>
+        <Button onClick={handleNewRow}>
         <FontAwesomeIcon icon={faPlusCircle} />
            <span className="buttonText">Agregar Producto</span>
         </Button>
