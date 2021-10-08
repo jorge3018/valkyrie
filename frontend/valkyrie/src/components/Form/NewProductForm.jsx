@@ -104,7 +104,7 @@ export default function NewProductForm(props) {
       <Form.Group  className="radio" onChange={e => setStateProduct(e.target.value)}>
           <h4>Estado</h4>   
           <Row> <Col>
-          <Form.Label><input  className="form-check-input form-check-inline" 
+          <Form.Label><input  className=" form-check-inline" 
           
           name="stateProduct"
           type="radio"
@@ -114,7 +114,7 @@ export default function NewProductForm(props) {
      </Col>
          <Col>
           
-          <Form.Label><input  className="form-check-input form-check-inline" 
+          <Form.Label><input  className="form-check-inline" 
                 name="stateProduct"
         type="radio"
         value="no disponible"
