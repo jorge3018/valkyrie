@@ -260,7 +260,7 @@ export default function ProductsTable() {
         head={title}
     />
       <Col> 
-      <div className="addProduct">
+      <div className="add">
         <Button onClick={handleNewRow}>
         <FontAwesomeIcon icon={faPlusCircle} />
            <span className="buttonText">Agregar Producto</span>

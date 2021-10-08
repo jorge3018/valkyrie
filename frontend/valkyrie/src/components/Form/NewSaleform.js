@@ -13,7 +13,7 @@ export default function NewSaleform(props) {
     const [document, setDocument] = useState(null);
     const [client, setClient] = useState(null);
     const [seller, setSeller] = useState(null);
-    const [stateSale, setStateSale] = useState(null)
+    const [stateSale, setStateSale] = useState("entregado")
     const [validated, setValidated] = useState(false);
     const [send, setSend] = useState(false);
 
@@ -33,7 +33,7 @@ export default function NewSaleform(props) {
         setDocument(null);
         setClient(null);
         setSeller(null);
-        setStateSale("creada");      
+        setStateSale("entregado");      
       
     };
 
@@ -103,7 +103,7 @@ export default function NewSaleform(props) {
                             autoFocus
                             placeholder="Valor Total"
                             name="value"
-                            type="text"
+                            type="number"
                             required
                             onChange={e => setValue(e.target.value)}
                         />
@@ -118,7 +118,7 @@ export default function NewSaleform(props) {
                             autoFocus
                             placeholder="Cantidad"
                             name="quantity"
-                            type="text"
+                            type="number"
                             required
                             onChange={e => setQuantity(e.target.value)}
                         />
@@ -133,7 +133,7 @@ export default function NewSaleform(props) {
                             autoFocus
                             placeholder="Valor Unitario"
                             name="unitValue"
-                            type="text"
+                            type="number"
                             required
                             onChange={e => setUnitValue(e.target.value)}
                         />
@@ -149,7 +149,7 @@ export default function NewSaleform(props) {
                             autoFocus
                             placeholder="Fecha"
                             name="date"
-                            type="text"
+                            type="date"
                             required
                             onChange={e => setDate(e.target.value)}
                         />
@@ -165,7 +165,7 @@ export default function NewSaleform(props) {
                             autoFocus
                             placeholder="Documento"
                             name="document"
-                            type="text"
+                            type="number"
                             required
                             onChange={e => setDocument(e.target.value)}
                         />
@@ -206,7 +206,7 @@ export default function NewSaleform(props) {
                     <Form.Group  className="radio" onChange={e => setStateSale(e.target.value)}>
                         <h4>Estado</h4>   
                         <Row> <Col>
-                    <Form.Label><input  className="form-check-input form-check-inline" 
+                    <Form.Label><input  className="form-check-inline" 
                          name="stateSale"
                         type="radio"
                         value="entregado"
@@ -214,12 +214,20 @@ export default function NewSaleform(props) {
                     />   Entregado </Form.Label>
                 </Col>
                 <Col>
-                    <Form.Label><input  className="form-check-input form-check-inline" 
+                    <Form.Label><input  className="form-check-inline" 
                         name="statesale"
                         type="radio"
                         value="cancelada"
                     />  Cancelada</Form.Label>
                 <label> </label>    
+                </Col>
+                <Col>
+                    <Form.Label><input  className="form-check-inline" 
+                         name="stateSale"
+                        type="radio"
+                        value="en proceso"
+                         
+                    />  En proceso </Form.Label>
                 </Col>
                 </Row>
        

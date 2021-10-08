@@ -128,19 +128,21 @@ export default function SalesTable() {
       formatExtraData: state,
 
       formatter: (cellContent, row) => {
-        if(row.stateSale.toLowerCase()==="disponible")
+        if(row.stateSale.toLowerCase()==="entregada")
         return(
-          <div className="status-p bg-success text-white">Disponible</div>
+          <div className="status-p bg-success text-white">Entregada</div>
         );
       
-      else if(row.stateSale.toLowerCase()==="no disponible")
+      else if(row.stateSale.toLowerCase()==="cancelada")
         return(
-          <span className="status-p bg-danger text-white">No Disponible</span>
+          <span className="status-p bg-danger text-white">Cancelada</span>
+        );
+        else if(row.stateSale.toLowerCase()==="en proceso")
+        return(
+          <span className="status-p bg-warning text-white">En proceso</span>
         )
-      else
-      return(
-        <span className="status-p bg-warning text-white">{row.stateSale}</span>
-      )
+
+     
        
         }
     },
@@ -271,7 +273,7 @@ export default function SalesTable() {
     <>
     <Row >
       <Col> 
-      <div className="addSale">
+      <div className="add">
         <Button variant="primary" onClick={handleNewRow}>
         <FontAwesomeIcon icon={faPlusCircle} />
            <span className="buttonText">Agregar Venta</span>
