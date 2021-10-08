@@ -1,10 +1,22 @@
 import React from "react";
+import UsersTable from "./Table/UsersTable";
+import { Row, Col } from "reactstrap";
 
 function Users() {
   return (
-    <div>
-      <h1 className="font-weight-light">Usuarios</h1>
-    </div>
+    <div className="Contenedor">
+    <Row className="Card">
+      <Col>
+      <h3>
+        <span className="header-title">Usuarios</span>
+      </h3>
+      </Col>
+      
+    </Row>
+          
+    <UsersTable/>
+  </div>
+    
   );
 }
 
