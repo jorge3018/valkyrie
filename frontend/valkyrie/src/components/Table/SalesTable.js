@@ -10,6 +10,7 @@ import { faSave,  faTrashAlt, faPlusCircle, faWindowClose} from '@fortawesome/fr
 import { Row, Col } from "reactstrap";
 
 import NewSale from "../Form/NewSaleform.js";
+import Alerta from "../Alerta";
 
 const key =  data.map(el => el.id); 
 
@@ -39,6 +40,11 @@ export default function SalesTable() {
     oldValue: null
   });
 
+  const [showAlert, setShowAlert] = useState(false);
+  const handleCloseAlert = () => setShowAlert(false);
+  const [mensaje, setMensaje] = useState("") 
+  const [title, setTitle] = useState("") 
+  const [variant, setVariant] = useState("") 
   const [show,setShow] = useState(false);
   const handleShow = () => setShow(true);
   const handleClose = () => setShow(false);
@@ -169,9 +175,9 @@ export default function SalesTable() {
               <button
                 className="btn btn-primary btn-xs"
                 onClick={() => {
-                  if(row.stateSale.toLowerCase()!=="cancelado" && row.stateSale.toLowerCase()!=="entregado"){
+                  if(row.stateSale.toLowerCase()!=="cancelado" && row.stateSale.toLowerCase()!=="entregada"){
                     return(
-                      alert("Estado incorrecto debe escoger entre cancelado y entregado")
+                      alert("Estado incorrecto debe escoger entre cancelado y entregada")
                     );}
                     else{
                   setState(prev => {
@@ -180,7 +186,11 @@ export default function SalesTable() {
                     row.state = null;
                     
                     let newState = { ...prev, state: row.state, row: null };
-                    alert("Venta actualizado correctamente.");
+                    setTitle("La venta: "+row.sale)
+                    setMensaje("Fue actualizada correctamente.")
+                    setVariant("success")
+                    setShowAlert(true);
+                    //alert("Venta actualizado correctamente.");
                     return newState;
                   });}
                 }}
@@ -259,7 +269,11 @@ export default function SalesTable() {
         setSales(prev => {
         let newEntry = { ...entry, id:id ,sale:sale, description:description, value:value, quantity:quantity, unitValue:unitValue, date:date, document:document, client:client, seller:seller, stateSale:stateSale};
         let newVal = [newEntry, ...prev];
-        alert("Venta registrada correctamente.");
+        setTitle("La venta: "+sale)
+                    setMensaje("Fue registrada correctamente.")
+                    setVariant("success")
+                    setShowAlert(true);
+        //alert("Venta registrada correctamente.");
         return newVal;
       });
       handleClose();
@@ -272,6 +286,13 @@ export default function SalesTable() {
   return (
     <>
     <Row >
+    <Alerta
+        show={showAlert}
+        onCancel={handleCloseAlert}
+        mensaje={mensaje}
+        variant={variant}
+        head={title}
+    />
       <Col> 
       <div className="add">
         <Button variant="primary" onClick={handleNewRow}>

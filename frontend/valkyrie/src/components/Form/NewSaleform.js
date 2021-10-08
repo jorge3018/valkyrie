@@ -235,9 +235,9 @@ export default function NewSaleform(props) {
       </Form.Group>
       </Row>
        <Row className="mb-1">
-      <Button variant="primary" onClick={handleSubmit}>
+       <Button variant="primary" onClick={handleSubmit}>
       <FontAwesomeIcon icon={faPlusCircle} />
-           <span className="buttonText">saleo</span>
+           <span className="buttonText">Venta</span>
       </Button>
       
       </Row>
