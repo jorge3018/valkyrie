@@ -8,22 +8,23 @@ export default function NewProductForm(props) {
   const [product, setProduct] = useState(null);
   const [description, setDescription] = useState(null);
   const [value, setValue] = useState(null);
-  const [stateProduct, setStateProduct] = useState("disponible");
+  const [state, setState] = useState("true");
   const [validated, setValidated] = useState(false);
   const [send, setSend] = useState(false);
-
    
   const handleClose = () => {
     props.onCancel();
   };
 
   const handleSave = (event) => {
-    props.onSave(props.id, product, description, value, stateProduct);
+    
+    props.onSave(product, description, value, state);
+  
     
     setProduct(null);
     setDescription(null);
     setValue(null);
-    setStateProduct("disponible");
+    setState("true");
     
   
   };
@@ -42,6 +43,7 @@ export default function NewProductForm(props) {
       setValidated(false); 
       handleSave();
       setSend(false);
+
     }
     
 
@@ -84,7 +86,7 @@ export default function NewProductForm(props) {
           rows={3}
           onChange={e => setDescription(e.target.value)}
               />
-                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                <Form.Control.Feedback>Todo bien!</Form.Control.Feedback>
        </Form.Group>
        </Row>
        <Row className="mb-1">
@@ -101,23 +103,23 @@ export default function NewProductForm(props) {
       </Form.Group>
       </Row>
        <Row className="mb-1">
-      <Form.Group  className="radio" onChange={e => setStateProduct(e.target.value)}>
+      <Form.Group  className="radio" onChange={e => setState(e.target.value)}>
           <h4>Estado</h4>   
           <Row> <Col>
           <Form.Label><input  className=" form-check-inline" 
           
-          name="stateProduct"
+          name="state"
           type="radio"
-          value="disponible"
+          value="true"
           defaultChecked 
      />   Disponible </Form.Label>
      </Col>
          <Col>
           
           <Form.Label><input  className="form-check-inline" 
-                name="stateProduct"
+                name="state"
         type="radio"
-        value="no disponible"
+        value="false"
         
               />  No Disponible</Form.Label>
         <label> </label>    

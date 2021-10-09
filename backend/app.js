@@ -1,4 +1,3 @@
-// corre en el puerto 8080 se puede modificar en bin/www http://localhost:8080/
 var createError = require('http-errors');
 var express = require('express');
 var cors = require("cors");
@@ -19,14 +18,14 @@ const swaggerOptions = {
       version: '1.0.0'
     }
   },
-  //apis: ['./modules/product/product.controller.js'],
+  apis: ['./modules/product/product.controller.js'],
 }
-//const swaggerDocs = swaggerJSDoc(swaggerOptions);
-//app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
+const swaggerDocs = swaggerJSDoc(swaggerOptions);
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 
 var MongoDBUtil = require('../../../visual/node/customer-service/backend/modules/mongodb/mongodb.module').MongoDBUtil;
-//var ProductController = require('../../../visual/node/customer-service/backend/modules/product/product.module')().ProductController;
+var ProductController = require('../../../visual/node/customer-service/backend/modules/product/product.module')().ProductController;
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -35,7 +34,7 @@ app.use(cookieParser());
 
 MongoDBUtil.init();
 app.use(cors());
-//app.use('/products', ProductController);
+app.use('/products', ProductController);
 
 app.get('/', function (req, res) {
   var pkg = require(path.join(__dirname, 'package.json'));

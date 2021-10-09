@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
-import data from '../Json/productData.json';
 import BootstrapTable from "react-bootstrap-table-next";
 import cellEditFactory from "react-bootstrap-table2-editor";
 import paginationFactory from "react-bootstrap-table2-paginator";
@@ -8,23 +7,31 @@ import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave,  faTrashAlt, faPlusCircle, faWindowClose} from '@fortawesome/free-solid-svg-icons'
 import { Row, Col } from "reactstrap";
+import ProductDataService from "../../services/product"
 
 import NewProduct from "../Form/NewProductForm";
 import Alerta from "../Alerta";
-const key =  data.map(el => el.id);
 
 const { SearchBar } = Search;
 
-const entry = {
-  id: null,
-  product: null,
-  description: null,
-  unitValue: null,
-  stateProduct: null
-};
-
 export default function ProductsTable() {
+  const cadenaABooleano = cadena => cadena === "true";
+ const [products, setProducts] = useState([]); // transformers products
+
+ const key =  products.map(el => el._id);
+  useEffect(() => {
+    retrieveProducts();
+  }, []);
   
+  const retrieveProducts = () => {
+  ProductDataService.getAll()
+  .then(response => {
+    setProducts(response.data);     
+  })
+  .catch(e => {
+    console.log(e);
+});};
+
     
   // To delete rows you be able to select rows
   const [state, setState] = useState({
@@ -40,9 +47,7 @@ export default function ProductsTable() {
   const [mensaje, setMensaje] = useState("") 
   const [title, setTitle] = useState("") 
   const [variant, setVariant] = useState("") 
-  const [products, setProducts] = useState( data); // transformers products
   
-
   // hide checkbox for selection
   const selectRowProp = {
     mode: "checkbox",
@@ -59,13 +64,13 @@ export default function ProductsTable() {
     }
     return true;
   };
-  // validator for number fields
+  // validator for state fields
   
   const stateValidator = (newValue, row, column) => {
-    if (newValue.toLowerCase()!=="disponible" && newValue.toLowerCase()!=="no disponible") {
+    if (newValue.toLowerCase()!=="true" && newValue.toLowerCase()!=="false") {
       return {
         valid: false,
-        message: "Estado incorrecto debe escoger entre disponible y no disponible"
+        message: "Estado incorrecto debe escoger entre true y false"
       };
     }
     return true;
@@ -73,9 +78,18 @@ export default function ProductsTable() {
 
   const columns = [
     {
-      dataField: "id",
-      text: "ID",
-      sort: true
+      dataField: "_id",
+      text: "#",
+      sort: true,
+      formatter: (cellContent, row, rowIndex) => {
+        
+        return(
+          <strong>{rowIndex+1}</strong>
+        );
+      
+      
+       
+        }
     },
     {
       dataField: "product",
@@ -88,11 +102,22 @@ export default function ProductsTable() {
         sort: true
       },
     {
-      dataField: "unit_value",
+      dataField: "price",
       text: "Valor Unitario",
       type: "number",
       validator: numberValidator,
-      sort: true
+      sort: true,
+      formatter: (cellContent, row) => {
+        
+        return(
+          <div>$ {Intl.NumberFormat().format(row.price)}</div>
+        );
+      
+      
+       
+        }
+
+
     },
     {
       dataField: "stateProduct",
@@ -102,12 +127,12 @@ export default function ProductsTable() {
       formatExtraData: state,
 
       formatter: (cellContent, row) => {
-        if(row.stateProduct.toLowerCase()==="disponible")
+        if(row.stateProduct===true)
         return(
           <div className="status-p bg-success text-white">Disponible</div>
         );
       
-      else if(row.stateProduct.toLowerCase()==="no disponible")
+      else if(row.stateProduct === false)
         return(
           <span className="status-p bg-danger text-white">No Disponible</span>
         )
@@ -132,7 +157,7 @@ export default function ProductsTable() {
       isDummyField: true,
       formatExtraData: state,
 
-      formatter: (cellContent, row) => {
+      formatter: (cellContent, row,rowIndex) => {
        
 
         if (row.state)
@@ -149,6 +174,14 @@ export default function ProductsTable() {
                     row.state = null;
                     
                     let newState = { ...prev, state: row.state, row: null };
+                    
+                    const stateProduct = cadenaABooleano(row.stateProduct);
+                    row.stateProduct= stateProduct;
+
+                    const save={product:row.product, description:row.description, price:row.price, stateProduct:stateProduct}
+                    console.log(row._id + save)
+                    handleEdit(row._id, save);
+
                     setTitle("El producto: "+row.product)
                     setMensaje("Fue actualizado correctamente.")
                     setVariant("success")
@@ -167,15 +200,19 @@ export default function ProductsTable() {
                 onClick={() => {
                   setProducts(prev => {
                     let newVal = prev.map(el => {
-                      if (el.id === row.id) {
+                      if (el._id === row._id) {
+                        row.stateProduct= cadenaABooleano(row.stateProduct);
                         return state.oldValue;
+
                       }
                       return el;
                     });
                     return newVal;
                   });
+                  
                   setState(prev => {
                     row.state = null;
+                    row.stateProduct= cadenaABooleano(row.stateProduct);
                     let newState = { ...prev, state: row.state, row: null };
                     return newState;
                   });
@@ -191,7 +228,7 @@ export default function ProductsTable() {
             <div>
               <button
                 className="btn btn-danger btn-xs"
-                onClick={() => handleDelete(row.id)}
+                onClick={() => handleDelete(row._id, rowIndex)}
               >
                 <FontAwesomeIcon icon={faTrashAlt} />
                 
@@ -212,36 +249,52 @@ export default function ProductsTable() {
   // a function to save the old value
   const handleStartEdit = row => {
     setState(prev => {
+      row.stateProduct= cadenaABooleano(row.stateProduct);
       let newVal = { ...prev, oldValue: { ...row } };
+      
        return newVal;
     });
   };
-
+  //edit
+const handleEdit =(id, data) => {
+  ProductDataService.updateProduct(id,data)
+         .then(response => {
+           console.log(response.data);
+         })
+         .catch(e => {
+           console.log(e);
+         });
+       };
   //  delected the selected row
   const handleDelete = rowId => {
-    setProducts(products.filter(el => el.id !== rowId));
-  };
-
-   const handleSaveAdd = (id, product, description, unitValue, stateProduct) => {
+    ProductDataService.deleteProduct( rowId)
+       .then(response => {
+        retrieveProducts();
+       })
+       .catch(e => {
+          console.log(e);
+       });
+   };
+   const handleSaveAdd = ( product, description, unitValue, stateProduct) => {
+    stateProduct= cadenaABooleano(stateProduct);
+     const save ={product:product, description:description, stateProduct:stateProduct,price:unitValue }
+    
      
-    // check duplicated id
-     // eslint-disable-next-line no-loop-func
-     while (products.filter(el => el.id === id).length) {
-      // the same id is entered
-      id =id+1;
-    }    
-
-        setProducts(prev => {
-        let newEntry = { ...entry, id: id, product:product, description:description, unit_value:unitValue, stateProduct:stateProduct };
-        let newVal = [newEntry, ...prev];
+    ProductDataService.createProduct(save)
+    .then(response => {
+      retrieveProducts();
+        
         setTitle("El producto: "+product)
         setMensaje("Fue registrado correctamente.")
                     setVariant("success")
                     setShowAlert(true);
-        //alert("Producto registrado correctamente.");
-        return newVal;
-      });
-      handleClose();
+        handleClose();
+      console.log(response.data);
+    })
+    .catch(e => {
+      console.log(e);
+    });
+       
     
   };
   const handleNewRow = () => {
@@ -260,7 +313,7 @@ export default function ProductsTable() {
         head={title}
     />
       <Col> 
-      <div className="add">
+      <div className="addProduct">
         <Button onClick={handleNewRow}>
         <FontAwesomeIcon icon={faPlusCircle} />
            <span className="buttonText">Agregar Producto</span>
@@ -270,7 +323,7 @@ export default function ProductsTable() {
 <Row >
   
   <ToolkitProvider 
-  keyField="id"
+  keyField="_id"
   data={ products }
   columns={ columns }
   search
