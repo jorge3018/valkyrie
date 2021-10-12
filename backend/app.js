@@ -19,6 +19,8 @@ const swaggerOptions = {
     }
   },
   apis: ['./modules/product/product.controller.js'],
+  //apis: ['./modules/product/product.controller.js'],
+  apis: ['./modules/user/user.controller.js'],
 }
 const swaggerDocs = swaggerJSDoc(swaggerOptions);
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
@@ -26,6 +28,8 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 var MongoDBUtil = require('./modules/mongodb/mongodb.module').MongoDBUtil;
 var ProductController = require('./modules/product/product.module')().ProductController;
+//var ProductController = require('../../../visual/node/customer-service/backend/modules/product/product.module')().ProductController;
+var UserController = require('./modules/user/user.module')().UserController;
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -35,6 +39,7 @@ app.use(cookieParser());
 MongoDBUtil.init();
 app.use(cors());
 app.use('/products', ProductController);
+app.use('/users', UserController);
 
 app.get('/', function (req, res) {
   var pkg = require(path.join(__dirname, 'package.json'));
