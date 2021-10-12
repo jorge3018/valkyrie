@@ -24,8 +24,8 @@ const swaggerDocs = swaggerJSDoc(swaggerOptions);
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 
-var MongoDBUtil = require('../../../visual/node/customer-service/backend/modules/mongodb/mongodb.module').MongoDBUtil;
-var ProductController = require('../../../visual/node/customer-service/backend/modules/product/product.module')().ProductController;
+var MongoDBUtil = require('./modules/mongodb/mongodb.module').MongoDBUtil;
+var ProductController = require('./modules/product/product.module')().ProductController;
 
 app.use(logger('dev'));
 app.use(express.json());
