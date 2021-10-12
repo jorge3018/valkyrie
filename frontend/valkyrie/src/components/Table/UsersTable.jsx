@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import data from '../Json/userData.json';
+import React, { useState, useEffect } from "react";
 import BootstrapTable from "react-bootstrap-table-next";
 import cellEditFactory from "react-bootstrap-table2-editor";
 import paginationFactory from "react-bootstrap-table2-paginator";
@@ -7,15 +6,28 @@ import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave,  faTrashAlt, faWindowClose} from '@fortawesome/free-solid-svg-icons'
 import { Row, } from "reactstrap";
+import UserDataService from "../../services/user"
 
 import Alerta from "../Alerta";
-const key =  data.map(el => el.id);
 
 const { SearchBar } = Search;
 
 export default function UsersTable() {
   
-    
+  const [users, setUsers] = useState( []); // transformers users
+  const key =  users.map(el => el._id);
+  useEffect(() => {
+    retrieveUsers();
+  }, []);
+
+  const retrieveUsers = () => {
+    UserDataService.getAll()
+    .then(response => {
+      setUsers(response.data);     
+    })
+    .catch(e => {
+      console.log(e);
+  });};
   // To delete rows you be able to select rows
   const [state, setState] = useState({
     row: null,
@@ -27,7 +39,6 @@ export default function UsersTable() {
   const [mensaje, setMensaje] = useState("") 
   const [title, setTitle] = useState("") 
   const [variant, setVariant] = useState("") 
-  const [users, setUsers] = useState( data); // transformers users
   
 
   // hide checkbox for selection
@@ -58,15 +69,28 @@ export default function UsersTable() {
   };
 
   const columns = [
-    {
-      dataField: "id",
-      text: "ID",
-      sort: true
+    { dataField: "_id",
+    text: "#",
+    sort: true,
+    editable: function(rowData) {
+      return rowData.allowEdit === false;
     },
+    formatter: (cellContent, row, rowIndex) => {
+      
+      return(
+        <strong>{rowIndex+1}</strong>
+      );
+      
+      }    
+    },
+  
     {
       dataField: "user",
       text: "Usuario",
-      sort: true
+      sort: true,
+      editable: function(rowData) {
+        return rowData.allowEdit === false;
+      }
     },
     {
       dataField: "stateUser",
@@ -124,7 +148,7 @@ export default function UsersTable() {
       isDummyField: true,
       formatExtraData: state,
 
-      formatter: (cellContent, row) => {
+      formatter: (cellContent, row,rowIndex) => {
        
 
         if (row.state)
@@ -141,6 +165,11 @@ export default function UsersTable() {
                     row.state = null;
                     
                     let newState = { ...prev, state: row.state, row: null };
+                   
+                    const save={user:row.user, stateUser:row.stateUser, rol:row.rol}
+                    console.log(row._id + save)
+                    handleEdit(row._id, save);
+
                     setTitle("El usuario: "+row.user)
                     setMensaje("Fue actualizado correctamente.")
                     setVariant("success")
@@ -159,7 +188,7 @@ export default function UsersTable() {
                 onClick={() => {
                   setUsers(prev => {
                     let newVal = prev.map(el => {
-                      if (el.id === row.id) {
+                      if (el.id === row._id) {
                         return state.oldValue;
                       }
                       return el;
@@ -183,7 +212,7 @@ export default function UsersTable() {
             <div>
               <button
                 className="btn btn-danger btn-xs"
-                onClick={() => handleDelete(row.id)}
+                onClick={() => handleDelete(row._id,rowIndex)}
               >
                 <FontAwesomeIcon icon={faTrashAlt} />
                 
@@ -196,7 +225,7 @@ export default function UsersTable() {
 
   const defaultSorted = [
     {
-      dataField: "name",
+      dataField: "user",
       order: "asc"
     }
   ];
@@ -208,14 +237,29 @@ export default function UsersTable() {
        return newVal;
     });
   };
+    //edit
+const handleEdit =(id, data) => {
+  UserDataService.updateUser(id,data)
+         .then(response => {
+           console.log(response.data);
+         })
+         .catch(e => {
+           console.log(e);
+         });
+       };
 
   //  delected the selected row
   const handleDelete = rowId => {
-    setUsers(users.filter(el => el.id !== rowId));
-  };
+    UserDataService.deleteUser( rowId)
+       .then(response => {
+        retrieveUsers();
+       })
+       .catch(e => {
+          console.log(e);
+       });
+   };
 
-  
-   
+      
   return (
     <>
     <Row >
@@ -231,7 +275,7 @@ export default function UsersTable() {
 <Row >
   
   <ToolkitProvider 
-  keyField="id"
+  keyField="_id"
   data={ users }
   columns={ columns }
   search
@@ -270,7 +314,8 @@ export default function UsersTable() {
               }
             },
             nonEditableRows: () =>
-              state.row ? key.filter(el => el !== state.row.id) : []
+              state.row ? key.filter(el => el !== state.row._id) : []
+              
           })}
 
 

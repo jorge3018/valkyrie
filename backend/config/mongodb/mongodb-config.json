@@ -1,0 +1,11 @@
+{
+    "mongodb": {
+      "server": "cluster0.nhdmh.mongodb.net",
+      "database": "valkyrie",
+      "user": "catatbcd",
+      "password": "2021",
+      "params": ""
+    }
+  }
+
+  
