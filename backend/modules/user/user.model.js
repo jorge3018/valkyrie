@@ -10,6 +10,10 @@ const { Int32 } = require('bson');
             type: String,
             required: true
         },
+        email: {
+            type: String,
+            required: true
+        },
         stateUser: {
             type: String,
             required: true

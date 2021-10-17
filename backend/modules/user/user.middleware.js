@@ -5,6 +5,7 @@
         addUser: addUser,
         getUsers: getUsers,
         getUserById: getUserById,
+        getUserByEmail: getUserByEmail,
         modifyUser: modifyUser,
         removeUser: removeUser
     };
@@ -59,6 +60,22 @@
     function getUserById(req, res, next) {
 
         UserService.fetchUserById(req.params.userId)
+            .then(success)
+            .catch(failure);
+
+        function success(data) {
+            req.response = data;
+            next();
+        }
+
+        function failure(err) {
+            next(err);
+        }
+
+    }
+    function getUserByEmail(req, res, next) {
+
+        UserService.fetchUserByEmail(req.params.userEmail)
             .then(success)
             .catch(failure);
 

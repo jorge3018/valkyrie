@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "valkyrie-website-4a5a3",
+  "private_key_id": "ebda404786cf35072f576bc1eb40c796ae4f22f7",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDYyHHE8+UYANBi\n2gxq4Bu23L/lCP7kjIepa+gsnR684RebIEZmNV+rT+GFnSLv6KMHKcr7p5SLxJ8v\nW0XOD2uFv+xlKxo19tFcz/pOJROr9qNX8RlRu91JmkXdsjbZZF7Oy3CY41Z0yRez\nVSGdVTrZC+zSaIZateZZ7r/U0Zyhdg6KOWzeC6Fln0lkGZo7MMJgiYcrvphOzmoj\nLc/bXfYyEQW2N++tO732de6f8z2STLprJZ1mAj+mQpn4ip+NiXsykbZBGWFhAiG1\nrrRbPXHuHjQWmkPS12T9SF0Vp8wjG7Pf9TWsv3gu8vd84of0n995+RyoKriel7Vo\n4w0saFthAgMBAAECggEAC/vwximRhaUt3/kb7KCdB5vmg9vec3YNXeFYQXciJuDu\ntCWxnp7evhK5bfCE6Oxcbt3xmb3m6V8iSbTrA/w4PnmgsOsUFN2jL1VUChPkpYIJ\n/6eVdb5D+nir2hirDZON5jK688jFk8k2JTTUmeUHTs5o9izPGJ6rsFcRhctctFQ/\nZ2hSAqk8LMlQQYsP83Bd8ue4GRc3JY8bkT6SVSde6feA7AxifFOHGq4bxZhG8rVQ\nXYGCakMCCm4MGz0akf93sEM2HqXxMK4Ex50lElafmGHgZ47cWvgHf130HAMVSals\naglHIVNFpxlFARWgMsu00sbUJ/gNvMLbO4WaPlN8nQKBgQDtXSD/P4X8h75ab428\nkWgmbLrDLui9n2ORPoaG+iLZe41Zeb434chkwAI/gyDA1NgHFf5k8ljbsye6oZ2f\nh0YwH5CcJcRUog4oOFZhrQnNWhH56XtFT9qr4QoQ8D/C58/R6Ep0ehJkX+RZJhsT\nyl3shlObeel59La1hwEZvIq9VwKBgQDpzadX23vnkWPu9yNlXXLfIWgYyu1wE2IB\nf2NpHrnM1/o/YZ7q+QZud3GaXA8lQ7DTowdt4v3Or3o5n1ZL5+BkUZ2oJIN8D8Xf\nOu4kycfSJ0TpT5WRNpOwmmjfHuRgO1EbK1dLOW5VSL0R6ccCg7gwiGjiI9pikmDA\nr5WnseGCBwKBgG71VfN8EnpWSlmkRDGeF32+3h9X0lyyIa1H+UMnsxrPcugczRr6\nZN8UEvj1p139IW9OjLlLwNYTDcNkwXZNmjXsy4Dy9rBJgSy0CU1nwmlIbZbR2low\nVhx6+mWoqWXHT5Lkb8m7NtXNLcWu1oGN3BIxSOwpNUdZaf+5uH37cS/JAoGBALap\nx64qellnC85tIyhUpCSTswJ7uJmxawaEgiRkrwDNVGQkXsZxnIa9pvHULrkMc6BF\nZM6DY4wRKMrQI9nV5Ug7Q5NUQ62vnQZUwi3Xv9f+eiZV2SLEowp8+KYpOn+8mBdD\n+0V4Ly1OUPknziW2xzaTvG3BWSNd/V1NUPzdSrQNAoGBAJIzLz2gF9COi6OjkGbK\n6PWfQBlzV0rGOw3yTCfxhdw+D7r4XX8WpjChQHpXcmM5aWQ3TaKkLm70g94Qr/EX\nNkq7/pYi5oFLaMIxj1h0uIX4uxFufv9ZhzA//jNYNnj1HdQSvzeff1LSB5mHviov\n6zaKFtbyYZcQYAyeZLjB+mWd\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-1li72@valkyrie-website-4a5a3.iam.gserviceaccount.com",
+  "client_id": "100146820113174377038",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-1li72%40valkyrie-website-4a5a3.iam.gserviceaccount.com"
+}

@@ -61,6 +61,12 @@
         function (req, res) {
             res.status(200).json(req.response);
         });
+    
+        router.get('/email/:userEmail',
+        UserMiddleware.getUserByEmail,
+         function (req, res) {
+             res.status(200).json(req.response);
+         });
 
     router.put('/:userId',
         UserMiddleware.modifyUser,

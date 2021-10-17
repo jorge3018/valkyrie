@@ -8,7 +8,22 @@ var logger = require('morgan');
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUI = require('swagger-ui-express');
 
+const corsOptions ={
+  origin:'*', 
+  credentials:true,            //access-control-allow-credentials:true
+  optionSuccessStatus:200,
+}
+
 var app = express();
+app.use(cors(corsOptions)) // Use this after the variable declaration
+
+const admin = require("firebase-admin");
+
+const serviceAccount = require("./config/firebase/privateKey.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
 
 //Swagger Configuration  
 const swaggerOptions = {
@@ -30,6 +45,23 @@ var MongoDBUtil = require('./modules/mongodb/mongodb.module').MongoDBUtil;
 var ProductController = require('./modules/product/product.module')().ProductController;
 //var ProductController = require('../../../visual/node/customer-service/backend/modules/product/product.module')().ProductController;
 var UserController = require('./modules/user/user.module')().UserController;
+
+function checkAuth(req, res, next) {
+  if (req.headers?.authorization?.startsWith('Bearer ')) {
+    const idToken = req.headers.authorization.split('Bearer ')[1];
+    admin.auth().verifyIdToken(idToken)
+      .then(() => {
+        next()
+      }).catch((error) => {
+        res.status(403).send('Unauthorized')
+      });
+  } else {
+    res.status(403).send('Unauthorized')
+  }
+}
+
+app.use('*', checkAuth);
+
 
 app.use(logger('dev'));
 app.use(express.json());

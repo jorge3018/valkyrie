@@ -26,6 +26,8 @@ export default function ProductsTable() {
   const retrieveProducts = () => {
   ProductDataService.getAll()
   .then(response => {
+    console.log("productos cargados desde la base de datos");
+    console.log(response.data);
     setProducts(response.data);     
   })
   .catch(e => {
@@ -362,7 +364,7 @@ const handleEdit =(id, data) => {
               }
             },
             nonEditableRows: () =>
-              state.row ? key.filter(el => el !== state.row.id) : []
+              state.row ? key.filter(el => el !== state.row._id) : []
           })}
 
 

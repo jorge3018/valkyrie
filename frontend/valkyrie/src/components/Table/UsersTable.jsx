@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import BootstrapTable from "react-bootstrap-table-next";
 import cellEditFactory from "react-bootstrap-table2-editor";
@@ -5,29 +7,117 @@ import paginationFactory from "react-bootstrap-table2-paginator";
 import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave,  faTrashAlt, faWindowClose} from '@fortawesome/free-solid-svg-icons'
-import { Row, } from "reactstrap";
-import UserDataService from "../../services/user"
+import { Row, Alert } from "reactstrap";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useHistory } from "react-router";
+import { getAuth } from "firebase/auth";
 
 import Alerta from "../Alerta";
-
 const { SearchBar } = Search;
+const BASE_URL = process.env.REACT_APP_API_URL;
+const PATH_USERS = 'users';
 
 export default function UsersTable() {
-  
   const [users, setUsers] = useState( []); // transformers users
   const key =  users.map(el => el._id);
+
+  const auth = getAuth();
+  
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [errors, setErrors] = useState(null);
+  const [newVal, setNewVal] = useState(0);
+  const [user, loading, error] = useAuthState(auth);
+  const history = useHistory();
+
   useEffect(() => {
-    retrieveUsers();
-  }, []);
+    if (loading) return;
+    if (!user) return history.replace("/");
+    else if(user)
+    verifyUsers (user.email);
+  }, [user, loading, history]);
+
+  useEffect(() => {
+    retrieveUsers ();
+  }, [newVal, history]);
+
+
+  const verifyUsers = (email) => {
+    if (!user) return history.replace("/");
+    else{
+    user.getIdToken(true).then(token => {
+      const requestOptions = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      
+      fetch(`${BASE_URL}${PATH_USERS}/email/${email}`, requestOptions)
+        .then(res => res.json())
+        .then(
+          (result) => {
+            console.log(result);
+            if(result.length === 0)
+            createUser();
+             
+          },
+          (error) => {
+            
+            console.error(error);
+          }
+        )
+    });}
+    };
+    const createUser = () => {
+        console.log(user)
+      const save ={user:user.displayName, email:user.email, stateUser:"no autorizado", rol:"vendedor" }
+      user.getIdToken(true).then(token => {
+        const requestOptions = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(save)
+        };
+        fetch(`${BASE_URL}${PATH_USERS}`, requestOptions)
+          .then(
+            (response) => {
+              response.json();
+              retrieveUsers();
+            },
+            (error) => {
+              
+            })
+      });
+      };
 
   const retrieveUsers = () => {
-    UserDataService.getAll()
-    .then(response => {
-      setUsers(response.data);     
-    })
-    .catch(e => {
-      console.log(e);
-  });};
+    if (!user) return history.replace("/");
+    user.getIdToken(true).then(token => {
+      const requestOptions = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      fetch(`${BASE_URL}${PATH_USERS}`, requestOptions)
+        .then(res => res.json())
+        .then(
+          (result) => {
+            setIsLoaded(true);
+            console.log(result);
+            setUsers(result); 
+          },
+          (error) => {
+            setIsLoaded(true);
+            setErrors(error);
+          }
+        )
+    });
+    };
   // To delete rows you be able to select rows
   const [state, setState] = useState({
     row: null,
@@ -87,6 +177,14 @@ export default function UsersTable() {
     {
       dataField: "user",
       text: "Usuario",
+      sort: true,
+      editable: function(rowData) {
+        return rowData.allowEdit === false;
+      }
+    },
+    {
+      dataField: "email",
+      text: "Correo",
       sort: true,
       editable: function(rowData) {
         return rowData.allowEdit === false;
@@ -238,28 +336,59 @@ export default function UsersTable() {
     });
   };
     //edit
-const handleEdit =(id, data) => {
-  UserDataService.updateUser(id,data)
-         .then(response => {
-           console.log(response.data);
-         })
-         .catch(e => {
-           console.log(e);
-         });
+const handleEdit =(id, data) => {  
+    user.getIdToken(true).then(token => {
+      const requestOptions = {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(data)
+      };
+      fetch(`${BASE_URL}${PATH_USERS}/${id}`, requestOptions)
+        .then(result => result.json())
+        .then(
+          (result) => {
+            setNewVal(newVal + 1);
+            console.log(result);
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+    });
+ 
        };
 
   //  delected the selected row
   const handleDelete = rowId => {
-    UserDataService.deleteUser( rowId)
-       .then(response => {
-        retrieveUsers();
-       })
-       .catch(e => {
-          console.log(e);
-       });
-   };
+    user.getIdToken(true).then(token => {
+        const requestOptions = {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        };
+        fetch(`${BASE_URL}${PATH_USERS}/${rowId}`, requestOptions)
+          .then(result => result.json())
+          .then(
+            (result) => {
+              setNewVal(newVal + 1);
+            },
+            (error) => {
+              console.log(error);
+            }
+          );
+      });
+  };
 
-      
+  if (errors) {
+    return <Alert color="danger">
+      Error: {error.message}
+    </Alert>;
+  } else {
   return (
     <>
     <Row >
@@ -339,4 +468,5 @@ const handleEdit =(id, data) => {
      
     </>
   );
+}
 }

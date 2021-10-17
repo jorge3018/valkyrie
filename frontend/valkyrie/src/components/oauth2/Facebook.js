@@ -49,7 +49,7 @@ export default class Facebook extends Component {
                 }}>
                     <img src={this.state.picture} alt={this.state.name} />
                     <h2>Bienvenido {this.state.name}!</h2>
-                    <a href="#" onClick={this.componentSalir}>
+                    <a href="/#" onClick={this.componentSalir}>
               Logout
             </a>
                 </div>

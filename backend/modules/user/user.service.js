@@ -5,6 +5,7 @@
         createUser: createUser,
         fetchUsers: fetchUsers,
         fetchUserById: fetchUserById,
+        fetchUserByEmail: fetchUserByEmail,
         updateUser: updateUser,
         deleteUser: deleteUser
     };
@@ -22,6 +23,11 @@
 
     function fetchUserById(userId) {
         return UserModel.findById(userId)
+            .exec();
+    }
+
+    function fetchUserByEmail(userEmail) {
+        return UserModel.find({"email" : userEmail})
             .exec();
     }
 
