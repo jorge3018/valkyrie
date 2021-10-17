@@ -1,8 +1,39 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:600|Work+Sans:400,500,600,700&display=swap');
 body {
   width: 100%;
-  height: 100vh;
+  height: 100%;
    }
+   .sign-out {
+   
+    color: rgb(228, 226, 226) !important;;
+    outline: none;
+    text-decoration: none;
+    transition: all 0.1s;
+  }
+  
+  .sign-out:focus,
+  .sign-out:hover,
+  .sign-out:active {
+    color: black !important;
+    background-color: rgb(245, 42, 42);
+    text-decoration: none;
+  }
+  
+  .sign-out > span {
+    margin: 0.1em;
+  }
+
+  .texto {
+    padding: 0.5em;
+    background-color: rgb(7, 7, 7);
+    outline: none;
+    text-decoration: none;
+    font-style: italic;
+  }
+
+  
+
+
   #Contenedor{
   background: radial-gradient(rgb(122, 122, 122), rgb(59, 59, 59));
    

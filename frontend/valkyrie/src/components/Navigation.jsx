@@ -1,10 +1,11 @@
 import React from 'react';
 import { useAuthState } from "react-firebase-hooks/auth";
 import { getAuth } from "firebase/auth";
-import { Navbar, Nav, NavItem,  Button, Row } from 'react-bootstrap'
+import { Navbar, Nav, NavItem, Row } from 'react-bootstrap'
 import { NavbarText } from 'reactstrap';
 import { logout } from "./Firebase/Firebase";
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSignOutAlt} from '@fortawesome/free-solid-svg-icons'
 import { Link } from "react-router-dom";
 
 const Navigation = () => {
@@ -49,6 +50,9 @@ const Navigation = () => {
               <Navbar.Toggle aria-controls="basic-navbar-nav" />
               <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="mr-auto">
+                <NavItem>
+                <NavbarText className="texto" >{user.displayName? user.displayName:''}  </NavbarText>
+                </NavItem>
                 <NavItem> <Link className="nav-link" to="/products">
                     Productos </Link>
                     </NavItem>
@@ -59,13 +63,16 @@ const Navigation = () => {
                     Usuarios</Link>
                     </NavItem>
                 </Nav>
-                <Nav className="ms-auto">
-                <NavItem>
-                <NavbarText>{user.email} {user.displayName? user.displayName:''} </NavbarText>
-              </NavItem>
-
+                <Nav>
+               
               <NavItem>
-              <Button variant="danger" onClick={logout}>Logout</Button>
+                <NavbarText className="texto">{user.email} </NavbarText>
+              </NavItem>
+              </Nav>
+              <Nav>
+              <NavItem >
+  
+              <Link to="/" className="nav-link sign-out pull-right" onClick={logout}><span>Salir </span><FontAwesomeIcon icon={faSignOutAlt} /></Link>
               </NavItem>
                 </Nav>
               </Navbar.Collapse>

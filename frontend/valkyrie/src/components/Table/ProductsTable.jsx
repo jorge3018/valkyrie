@@ -8,31 +8,62 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave,  faTrashAlt, faPlusCircle, faWindowClose} from '@fortawesome/free-solid-svg-icons'
 import { Row, Col } from "reactstrap";
 import ProductDataService from "../../services/product"
-
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useHistory } from "react-router";
+import { getAuth } from "firebase/auth";
 import NewProduct from "../Form/NewProductForm";
 import Alerta from "../Alerta";
 
 const { SearchBar } = Search;
+const BASE_URL = process.env.REACT_APP_API_URL;
+const PATH = 'products';
 
 export default function ProductsTable() {
   const cadenaABooleano = cadena => cadena === "true";
  const [products, setProducts] = useState([]); // transformers products
-
  const key =  products.map(el => el._id);
+ const auth = getAuth();
+ const [isLoaded, setIsLoaded] = useState(false);
+  const [errors, setErrors] = useState(null);
+  const [newVal, setNewVal] = useState(0);
+  const [user, loading, error] = useAuthState(auth);
+  const history = useHistory();
+
   useEffect(() => {
+    if (loading) return;
+    if (!user) return history.replace("/");
+    else if(user)
     retrieveProducts();
-  }, []);
+  }, [user, loading, history]);
+ 
+ 
   
   const retrieveProducts = () => {
-  ProductDataService.getAll()
-  .then(response => {
-    console.log("productos cargados desde la base de datos");
-    console.log(response.data);
-    setProducts(response.data);     
-  })
-  .catch(e => {
-    console.log(e);
-});};
+    if (!user) return history.replace("/");
+    user.getIdToken(true).then(token => {
+      const requestOptions = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      fetch(`${BASE_URL}${PATH}`, requestOptions)
+        .then(res => res.json())
+        .then(
+          (result) => {
+            setIsLoaded(true);
+            console.log("productos cargados desde la base de datos");
+            console.log(result);
+            setProducts(result); 
+          },
+          (error) => {
+            setIsLoaded(true);
+            setErrors(error);
+          }
+        )
+    });
+};
 
     
   // To delete rows you be able to select rows
@@ -249,6 +280,10 @@ export default function ProductsTable() {
   ];
 
   // a function to save the old value
+
+
+
+
   const handleStartEdit = row => {
     setState(prev => {
       row.stateProduct= cadenaABooleano(row.stateProduct);
@@ -258,46 +293,86 @@ export default function ProductsTable() {
     });
   };
   //edit
-const handleEdit =(id, data) => {
-  ProductDataService.updateProduct(id,data)
-         .then(response => {
-           console.log(response.data);
-         })
-         .catch(e => {
-           console.log(e);
-         });
+  const handleEdit =(id, data) => {  
+    user.getIdToken(true).then(token => {
+      const requestOptions = {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(data)
+      };
+      fetch(`${BASE_URL}${PATH}/${id}`, requestOptions)
+        .then(result => result.json())
+        .then(
+          (result) => {
+            setNewVal(newVal + 1);
+            console.log(result);
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+    });
+ 
        };
+
+
+
   //  delected the selected row
   const handleDelete = rowId => {
-    ProductDataService.deleteProduct( rowId)
-       .then(response => {
-        retrieveProducts();
-       })
-       .catch(e => {
-          console.log(e);
-       });
-   };
+    user.getIdToken(true).then(token => {
+        const requestOptions = {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        };
+        fetch(`${BASE_URL}${PATH}/${rowId}`, requestOptions)
+          .then(result => result.json())
+          .then(
+            (result) => {
+              retrieveProducts();
+            },
+            (error) => {
+              console.log(error);
+            }
+          );
+      });
+  };
+
+
+  
    const handleSaveAdd = ( product, description, unitValue, stateProduct) => {
     stateProduct= cadenaABooleano(stateProduct);
      const save ={product:product, description:description, stateProduct:stateProduct,price:unitValue }
-    
-     
-    ProductDataService.createProduct(save)
-    .then(response => {
-      retrieveProducts();
-        
-        setTitle("El producto: "+product)
-        setMensaje("Fue registrado correctamente.")
-                    setVariant("success")
-                    setShowAlert(true);
-        handleClose();
-      console.log(response.data);
-    })
-    .catch(e => {
-      console.log(e);
+     user.getIdToken(true).then(token => {
+      const requestOptions = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(save)
+      };
+      fetch(`${BASE_URL}${PATH}`, requestOptions)
+        .then(
+          (response) => {
+            response.json();
+            retrieveProducts();
+            setTitle("El producto: "+product)
+            setMensaje("Fue registrado correctamente.")
+                        setVariant("success")
+                        setShowAlert(true);
+            handleClose();
+          },
+          (error) => {
+            
+          })
     });
        
-    
   };
   const handleNewRow = () => {
     handleShow();
