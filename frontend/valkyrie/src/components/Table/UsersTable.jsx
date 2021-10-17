@@ -32,13 +32,10 @@ export default function UsersTable() {
   useEffect(() => {
     if (loading) return;
     if (!user) return history.replace("/");
-    else if(user)
     verifyUsers (user.email);
   }, [user, loading, history]);
 
-  useEffect(() => {
-    retrieveUsers ();
-  }, [newVal, history]);
+ 
 
 
   const verifyUsers = (email) => {
@@ -58,8 +55,10 @@ export default function UsersTable() {
         .then(
           (result) => {
             console.log(result);
+           
             if(result.length === 0)
             createUser();
+            retrieveUsers ();
              
           },
           (error) => {
@@ -70,6 +69,7 @@ export default function UsersTable() {
     });}
     };
     const createUser = () => {
+      if (!user) return history.replace("/");
         console.log(user)
       const save ={user:user.displayName, email:user.email, stateUser:"no autorizado", rol:"vendedor" }
       user.getIdToken(true).then(token => {
@@ -108,6 +108,7 @@ export default function UsersTable() {
         .then(
           (result) => {
             setIsLoaded(true);
+            console.log("Usuarios cargados desde la base de datos");
             console.log(result);
             setUsers(result); 
           },
@@ -264,7 +265,7 @@ export default function UsersTable() {
                     
                     let newState = { ...prev, state: row.state, row: null };
                    
-                    const save={user:row.user, stateUser:row.stateUser, rol:row.rol}
+                    const save={ stateUser:row.stateUser, rol:row.rol}
                     console.log(row._id + save)
                     handleEdit(row._id, save);
 
@@ -375,7 +376,7 @@ const handleEdit =(id, data) => {
           .then(result => result.json())
           .then(
             (result) => {
-              setNewVal(newVal + 1);
+              retrieveUsers ();
             },
             (error) => {
               console.log(error);

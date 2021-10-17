@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { initializeApp } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, updateProfile, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: `${process.env.REACT_APP_FIREBASE_API_KEY}`,
@@ -57,12 +57,14 @@ const signInEmailAndPassword = (email, password) => {
     });
 };
 
+
 const registerWithEmailAndPassword = async (name, email, password) => {
   createUserWithEmailAndPassword(auth, email, password)
   .then((userCredential) => {
     const user = userCredential.user;
-    user.displayName = name;
-  
+    user.displayName= name;
+    updateProfile(user,{displayName: name})   
+
   }).catch((error) => {
     const errorCode = error.code;
     const errorMessage = error.message;

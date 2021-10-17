@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import BootstrapTable from "react-bootstrap-table-next";
@@ -7,7 +9,6 @@ import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave,  faTrashAlt, faPlusCircle, faWindowClose} from '@fortawesome/free-solid-svg-icons'
 import { Row, Col } from "reactstrap";
-import ProductDataService from "../../services/product"
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useHistory } from "react-router";
 import { getAuth } from "firebase/auth";
@@ -32,11 +33,11 @@ export default function ProductsTable() {
   useEffect(() => {
     if (loading) return;
     if (!user) return history.replace("/");
-    else if(user)
+    else
     retrieveProducts();
+    
   }, [user, loading, history]);
- 
- 
+  
   
   const retrieveProducts = () => {
     if (!user) return history.replace("/");

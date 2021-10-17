@@ -11,9 +11,12 @@ import { Link } from "react-router-dom";
 const Navigation = () => {
   const auth = getAuth();
   const [user] = useAuthState(auth);
+  console.log("parametros user")
+  console.log(user)
   
   if (!user) {
-    return(
+    
+       return(
       
         <Row>
           <div className="col-md-12">
@@ -66,7 +69,7 @@ const Navigation = () => {
                 <Nav>
                
               <NavItem>
-                <NavbarText className="texto">{user.email} </NavbarText>
+                <NavbarText className="texto">{user.email } </NavbarText>
               </NavItem>
               </Nav>
               <Nav>
