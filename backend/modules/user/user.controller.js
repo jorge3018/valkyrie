@@ -14,21 +14,21 @@
     *     description: Create an user 
     *     parameters: 
     *     - in: formData
-    *       name: name
+    *       name: user
     *       type: string
     *       description: A person's name.
     *     - in: formData
-    *       name: fav_number
-    *       type: number
-    *       description: A person's favorite number.
+    *       name: email
+    *       type: string
+    *       description: A person's email address.
     *     - in: formData
-    *       name: fav_number2
-    *       type: number
-    *       description: A person's favorite number.
+    *       name: stateUser
+    *       type: String
+    *       description: A person's state: Authorized, unauthorized and pending.
     *     - in: formData
-    *       name: fav_number3
-    *       type: number
-    *       description: A person's favorite number.
+    *       name:  rol
+    *       type: String
+    *       description: A person's rol: administrator and seller.
     *     responses:  
     *       201: 
     *         description: Created  
@@ -41,32 +41,63 @@
         });
 
     /** 
-* @swagger 
-* /products: 
-*   get: 
-*     description: Get all Employee 
-*     responses:  
-*       200: 
-*         description: Success  
-*   
-*/
+    * @swagger 
+    * /users: 
+    *   get: 
+    *     description: Get all users 
+    *     responses:  
+    *       200: 
+    *         description: Success  
+    *   
+    */
     router.get('/',
         UserMiddleware.getUsers,
         function (req, res) {
             res.status(200).json(req.response);
         });
 
+     /** 
+    * @swagger 
+    * /users/userId: 
+    *   get: 
+    *     description: Get user by Id 
+    *     responses:  
+    *       200: 
+    *         description: Success  
+    *   
+    */
     router.get('/:userId',
        UserMiddleware.getUserById,
         function (req, res) {
             res.status(200).json(req.response);
         });
     
+    /** 
+    * @swagger 
+    * /users/email/userEmail: 
+    *   get: 
+    *     description: Get user by email 
+    *     responses:  
+    *       200: 
+    *         description: Success  
+    *   
+    */   
         router.get('/email/:userEmail',
         UserMiddleware.getUserByEmail,
          function (req, res) {
              res.status(200).json(req.response);
          });
+
+    /** 
+    * @swagger 
+    * /users/userId: 
+    *   put: 
+    *     description: Modify user by Id
+    *     responses:  
+    *       200: 
+    *         description: Success  
+    *   
+    */
 
     router.put('/:userId',
         UserMiddleware.modifyUser,
@@ -74,6 +105,16 @@
             res.status(200).json(req.response);
         });
 
+    /** 
+    * @swagger 
+    * /users/userId: 
+    *   delete: 
+    *     description: Delete user by Id 
+    *     responses:  
+    *       200: 
+    *         description: Success  
+    *   
+    */
     router.delete('/:userId',
         UserMiddleware.removeUser,
         function (req, res) {

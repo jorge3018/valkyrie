@@ -11,24 +11,24 @@
     * @swagger 
     * /products: 
     *   post: 
-    *     description: Create an Employee 
+    *     description: Create an product 
     *     parameters: 
     *     - in: formData
-    *       name: name
+    *       name: product
     *       type: string
-    *       description: A person's name.
+    *       description: A product's name.
     *     - in: formData
-    *       name: fav_number
-    *       type: number
-    *       description: A person's favorite number.
+    *       name: description
+    *       type: String
+    *       description: A product's description.
     *     - in: formData
-    *       name: fav_number2
-    *       type: number
-    *       description: A person's favorite number.
+    *       name: stateProduct
+    *       type: Boolean
+    *       description: A product's state available and unavailable.
     *     - in: formData
-    *       name: fav_number3
+    *       name: price
     *       type: number
-    *       description: A person's favorite number.
+    *       description: A product's unitary price.
     *     responses:  
     *       201: 
     *         description: Created  
@@ -41,20 +41,31 @@
         });
 
     /** 
-* @swagger 
-* /products: 
-*   get: 
-*     description: Get all Employee 
-*     responses:  
-*       200: 
-*         description: Success  
-*   
-*/
+    * @swagger 
+    * /products: 
+    *   get: 
+    *     description: Get all products 
+    *     responses:  
+    *       200: 
+    *         description: Success  
+    *   
+    */
     router.get('/',
         ProductMiddleware.getProducts,
         function (req, res) {
             res.status(200).json(req.response);
         });
+    
+    /** 
+    * @swagger 
+    * /products/productId: 
+    *   get: 
+    *     description: Get product by Id 
+    *     responses:  
+    *       200: 
+    *         description: Success  
+    *   
+    */
 
     router.get('/:productId',
         ProductMiddleware.getProductById,
@@ -62,12 +73,32 @@
             res.status(200).json(req.response);
         });
 
+    /** 
+    * @swagger 
+    * /products/productId: 
+    *   put: 
+    *     description: Modify product by Id 
+    *     responses:  
+    *       200: 
+    *         description: Success  
+    *   
+    */
     router.put('/:productId',
         ProductMiddleware.modifyProduct,
         function (req, res) {
             res.status(200).json(req.response);
         });
 
+    /** 
+    * @swagger 
+    * /products/productId: 
+    *   delete: 
+    *     description: Delete product by Id 
+    *     responses:  
+    *       200: 
+    *         description: Success  
+    *   
+    */
     router.delete('/:productId',
         ProductMiddleware.removeProduct,
         function (req, res) {
