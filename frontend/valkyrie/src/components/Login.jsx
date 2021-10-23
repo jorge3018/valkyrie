@@ -26,13 +26,13 @@ function Login() {
     </Row>
     <Row>
     <Col xs={10} md={6} >
-    <div className="row">
-    <label>Email</label>
+    <div className="login">
+    <label >Email</label>
      <input name="email" type="text" value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Ingrese su email" required />
     </div> 
-    <div className="row">
+    <div className="login">
     <label>Password</label>
      <input  name="password" type="password"
             onChange={(e) => setPassword(e.target.value)}
@@ -43,16 +43,16 @@ function Login() {
     
      >Log in</button>
   </div>
+  <br></br>
+  <label>O inicie sesión con:</label>
      
    </Col>
     <Col xs={8} md={6}>
    <div id="alternativeLogin">
-    <label>O inicie sesión con:</label>
-    <div id="iconGroup">
-      
+    
+          
     <GoogleButton  id="googleIcon" onClick={signInWithGoogle} />
     
-    </div>
   </div></Col></Row>
   <Row>
   <Col className="register-info"><span>¿Aún no tienes una cuenta?</span><a href="/register"><strong>Crea tu cuenta</strong></a></Col>

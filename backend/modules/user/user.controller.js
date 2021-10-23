@@ -24,11 +24,11 @@
     *     - in: formData
     *       name: stateUser
     *       type: String
-    *       description: A person's state: Authorized, unauthorized and pending.
+    *       description: A person's state (Authorized, unauthorized and pending).
     *     - in: formData
     *       name:  rol
     *       type: String
-    *       description: A person's rol: administrator and seller.
+    *       description: A person's rol (administrator and seller).
     *     responses:  
     *       201: 
     *         description: Created  

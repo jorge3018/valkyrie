@@ -34,7 +34,7 @@ const swaggerOptions = {
     }
   },
   apis: ['./modules/product/product.controller.js'],
-  //apis: ['./modules/product/product.controller.js'],
+  apis: ['./modules/sale/sale.controller.js'],
   apis: ['./modules/user/user.controller.js'],
 }
 const swaggerDocs = swaggerJSDoc(swaggerOptions);
@@ -43,7 +43,7 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 var MongoDBUtil = require('./modules/mongodb/mongodb.module').MongoDBUtil;
 var ProductController = require('./modules/product/product.module')().ProductController;
-//var ProductController = require('../../../visual/node/customer-service/backend/modules/product/product.module')().ProductController;
+var SaleController = require('./modules/sale/sale.module')().SaleController;
 var UserController = require('./modules/user/user.module')().UserController;
 
 function checkAuth(req, res, next) {
@@ -53,10 +53,10 @@ function checkAuth(req, res, next) {
       .then(() => {
         next()
       }).catch((error) => {
-        res.status(403).send('Unauthorized')
+        res.status(403).send('No autorizado')
       });
   } else {
-    res.status(403).send('Unauthorized')
+    res.status(403).send('No autorizado')
   }
 }
 
@@ -71,6 +71,7 @@ app.use(cookieParser());
 MongoDBUtil.init();
 app.use(cors());
 app.use('/products', ProductController);
+app.use('/sales', SaleController);
 app.use('/users', UserController);
 
 app.get('/', function (req, res) {

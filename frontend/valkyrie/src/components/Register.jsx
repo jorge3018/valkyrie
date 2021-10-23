@@ -40,25 +40,25 @@ function Register() {
     </Row>
     <Row>
     <Col xs={10} md={6} >
-    <div className="row">
+    <div className="login">
     <label> Nombre:</label>
      <input name="fullname" type="text"value={name}
            onChange={(e) => setName(e.target.value)}
           placeholder="Nombre completo" required />
     </div> 
-    <div className="row">
+    <div className="login">
     <label>Email</label>
      <input name="email" type="text" value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Ingrese su email" required />
     </div> 
-    <div className="row">
+    <div className="login">
     <label>Password</label>
      <input  name="password" type="password"
             onChange={(e) => setPassword(e.target.value)}
             value={password} placeholder="Ingrese su clave" required/>
       </div>
-      <div id="button" className="row">
+      <div id="button" className="login">
     <button id="botonLogin"onClick={register} >Registrar</button>
   </div>
      

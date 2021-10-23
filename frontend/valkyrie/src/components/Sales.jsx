@@ -1,5 +1,5 @@
 import React from "react";
-import SalesTable from "./Table/SalesTable.js";
+import SalesTable from "./Table/SalesTable.jsx";
 import { Row, Col } from "reactstrap";
 
 function Sales() {

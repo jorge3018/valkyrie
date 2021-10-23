@@ -11,7 +11,7 @@
     * @swagger 
     * /products: 
     *   post: 
-    *     description: Create an product 
+    *     description: Create an product.
     *     parameters: 
     *     - in: formData
     *       name: product
@@ -24,7 +24,7 @@
     *     - in: formData
     *       name: stateProduct
     *       type: Boolean
-    *       description: A product's state available and unavailable.
+    *       description: A product's state (available and unavailable).
     *     - in: formData
     *       name: price
     *       type: number

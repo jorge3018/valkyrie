@@ -1,7 +1,0 @@
-[{"id":1,"user":"Andres","stateUser":"pendiente","rol":"administrador"},
-{"id":2,"user":"Ana","stateUser":"autorizado","rol":"vendedor" },
-{"id":3,"user":"Camilo","stateUser":"no autorizado","rol":"vendedor" },
-{"id":4,"user":"Ines","stateUser":"pendiente","rol":"administrador"},
-{"id":5,"user":"Fernando","stateUser":"autorizado","rol":"vendedor" },
-{"id":6,"user":"Jair","stateUser":"no autorizado","rol":"vendedor" }
-]

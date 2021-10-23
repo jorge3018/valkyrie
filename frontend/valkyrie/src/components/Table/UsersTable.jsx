@@ -181,6 +181,13 @@ export default function UsersTable() {
       sort: true,
       editable: function(rowData) {
         return rowData.allowEdit === false;
+      },
+      formatter: (cellContent, row) => {
+        return(
+          <div>
+          <div className="title-th" data-title="Usuario: "></div>{row.user}
+          </div>
+        );
       }
     },
     {
@@ -189,6 +196,12 @@ export default function UsersTable() {
       sort: true,
       editable: function(rowData) {
         return rowData.allowEdit === false;
+      },
+      formatter: (cellContent, row) => {
+        return(
+          <div>
+          <div className="title-th" data-title="Correo: "></div>{row.email}</div>
+        );
       }
     },
     {
@@ -201,17 +214,20 @@ export default function UsersTable() {
       formatter: (cellContent, row) => {
         if(row.stateUser.toLowerCase()==="autorizado")
         return(
-          <div className="status-p bg-success text-white">Autorizado</div>
-        );
+          <div>
+          <div className="title-th" data-title="Estado: "></div><span className="status-p bg-success text-white">Autorizado</span>
+        </div>);
       
       else if(row.stateUser.toLowerCase()==="no autorizado")
         return(
-          <span className="status-p bg-danger text-white">No Autorizado</span>
-        );
+          <div>
+          <div className="title-th" data-title="Estado: "></div><span className="status-p bg-danger text-white">No Autorizado</span>
+        </div>);
         else if(row.stateUser.toLowerCase()==="pendiente")
         return(
-          <span className="status-p bg-warning text-white">Pendiente</span>
-        )
+          <div>
+          <div className="title-th" data-title="Estado: "> </div><span className="status-p bg-warning text-white">Pendiente</span>
+        </div>)
             
         }
     },
@@ -223,13 +239,15 @@ export default function UsersTable() {
       formatter: (cellContent, row) => {
         if(row.rol.toLowerCase()==="administrador")
         return(
-          <div className="status-p bg-success text-white">Administrador</div>
-        );
+          <div>
+          <div className="title-th" data-title="Rol: "></div><span className="status-p bg-success text-white">Administrador</span>
+        </div>);
       
       else if(row.rol.toLowerCase()==="vendedor")
         return(
-          <span className="status-p bg-primary text-white">Vendedor</span>
-        )
+          <div>
+          <div  className="title-th" data-title="Rol: "></div><span className="status-p bg-primary text-white">Vendedor</span>
+        </div>)
             
         }
     },
@@ -242,7 +260,7 @@ export default function UsersTable() {
     },
     {
       dataField: "actions",
-      text: "Actiones",
+      text: "Acciones",
       editable: false,
       isDummyField: true,
       formatExtraData: state,
@@ -252,7 +270,7 @@ export default function UsersTable() {
 
         if (row.state)
           return (
-            <div>
+            <div className="action">
               <button
                 className="btn btn-primary btn-xs"
                 onClick={() => {
@@ -308,7 +326,7 @@ export default function UsersTable() {
           );
         else
           return (
-            <div>
+            <div className="action">
               <button
                 className="btn btn-danger btn-xs"
                 onClick={() => handleDelete(row._id,rowIndex)}

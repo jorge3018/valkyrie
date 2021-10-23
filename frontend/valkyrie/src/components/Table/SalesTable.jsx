@@ -12,75 +12,73 @@ import { Row, Col } from "reactstrap";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useHistory } from "react-router";
 import { getAuth } from "firebase/auth";
-import NewProduct from "../Form/NewProductForm";
+import NewSale from "../Form/NewSaleform.jsx";
 import Alerta from "../Alerta";
-
 const { SearchBar } = Search;
 const BASE_URL = process.env.REACT_APP_API_URL;
-const PATH = 'products';
+const PATH = 'sales';
 
-export default function ProductsTable() {
+export default function SalesTable() {
   
-  const cadenaABooleano = cadena => cadena === "true";
-  const [products, setProducts] = useState([]); // transformers products
-  const key =  products.map(el => el._id);
+  const [sales, setSales] = useState([]); // transformers sales
+  const key =  sales.map(el => el._id);
   const auth = getAuth();
   const [isLoaded, setIsLoaded] = useState(false);
   const [errors, setErrors] = useState(null);
   const [newVal, setNewVal] = useState(0);
+  const [newDate, setNewDate] = useState(false);
   const [user, loading, error] = useAuthState(auth);
   const history = useHistory();
-  const [showAlert, setShowAlert] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);   
   const [show,setShow] = useState(false);
   const handleShow = () => setShow(true);
   const handleClose = () => setShow(false);
   const handleCloseAlert = () => setShowAlert(false);
-  const [mensaje, setMensaje] = useState("") 
-  const [title, setTitle] = useState("") 
-  const [variant, setVariant] = useState("") 
+  const [mensaje, setMensaje] = useState("");
+  const [title, setTitle] = useState("");
+  const [variant, setVariant] = useState("");
   // To delete rows you be able to select rows
   const [state, setState] = useState({
-    row: null,
-    state: null,
-    oldValue: null
-  });
+      row: null,
+      state: null,
+      oldValue: null
+    });
 
   useEffect(() => {
     if (loading) return;
     if (!user) return history.replace("/");
     else
-    retrieveProducts();
+    retrieveSales();
     
   }, [user, loading, history]);
-  
-  
-  const retrieveProducts = () => {
-    if (!user) return history.replace("/");
-    user.getIdToken(true).then(token => {
-      const requestOptions = {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      };
-      fetch(`${BASE_URL}${PATH}`, requestOptions)
-        .then(res => res.json())
-        .then(
-          (result) => {
-            setIsLoaded(true);
-            console.log("productos cargados desde la base de datos");
-            console.log(result);
-            setProducts(result); 
+    
+  const retrieveSales = () => {
+      if (!user) return history.replace("/");
+      user.getIdToken(true).then(token => {
+        const requestOptions = {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
           },
-          (error) => {
-            setIsLoaded(true);
-            setErrors(error);
-          }
-        )
-    });
-};
-
+        };
+        fetch(`${BASE_URL}${PATH}`, requestOptions)
+          .then(res => res.json())
+          .then(
+            (result) => {
+              setIsLoaded(true);
+              console.log("Lista de ventas cargada desde la base de datos");
+              console.log(result);
+              setSales(result); 
+            },
+            (error) => {
+              setIsLoaded(true);
+              setErrors(error);
+            }
+          )
+      });
+  };
+  
   // hide checkbox for selection
   const selectRowProp = {
     mode: "checkbox",
@@ -97,18 +95,17 @@ export default function ProductsTable() {
     }
     return true;
   };
-  // validator for state fields
+// validator for state fields
   
-  const stateValidator = (newValue, row, column) => {
-    if (newValue.toLowerCase()!=="true" && newValue.toLowerCase()!=="false") {
-      return {
-        valid: false,
-        message: "Estado incorrecto debe escoger entre true y false"
-      };
-    }
-    return true;
-  };
-
+const stateValidator = (newValue, row, column) => {
+  if (newValue.toLowerCase()!=="pendiente" && newValue.toLowerCase()!=="cancelado" && newValue.toLowerCase()!=="entregado") {
+    return {
+      valid: false,
+      message: "Estado incorrecto debe escoger entre pendiente, cancelado y entregado"
+    };
+  }
+  return true;
+};
   const columns = [
     {
       dataField: "_id",
@@ -121,68 +118,126 @@ export default function ProductsTable() {
       }
     },
     {
-      dataField: "product",
-      text: "Producto",
+      dataField: "sale",
+      text: "Venta",
       sort: true,
       formatter: (cellContent, row) => {
         return(
-          <div><div className="title-th" data-title="Producto: "></div>{row.product}</div>
+          <div><div className="title-th" data-title="Venta: "></div>{row.sale}</div>
         );}
-   },
-    {
-        dataField: "description",
-        text: "Descripción",
-        sort: true,
-        formatter: (cellContent, row) => {
-          return(
-            <div><div  className="title-th" data-title="Descripción: "></div>{row.description}</div>
-          );}
     },
     {
-      dataField: "price",
-      text: "Valor Unitario",
+      dataField: "description",
+      text: "Descripción",
+      sort: true,
+      formatter: (cellContent, row) => {
+        return(
+          <div><div  className="title-th" data-title="Descripción: "></div>{row.description}</div>
+        );}
+    },
+    {
+      dataField: "value",
+      text: "Valor Total",
       type: "number",
+      editable: function(rowData) {
+        return rowData.allowEdit === false;
+      },
       validator: numberValidator,
       sort: true,
       formatter: (cellContent, row) => {
-        
         return(
-          <div>
-          <div className="title-th" data-title="Valor Unitario: "></div>$ {Intl.NumberFormat().format(row.price)}
-          </div>
-        );
-   }
-
-
+          <div><div  className="title-th" data-title="Valor Total: "></div>{Intl.NumberFormat().format(row.value)}</div>
+        );}
     },
     {
-      dataField: "stateProduct",
+        dataField: "quantity",
+        text: "Cantidad",
+        type: "number",
+        validator: numberValidator,
+        sort: true,
+        formatter: (cellContent, row) => {
+          return(
+            <div><div  className="title-th" data-title="Cantidad: "></div>{row.quantity}</div>
+          );}
+      },
+      {
+        dataField: "unitValue",
+        text: "Valor Unitario",
+        type: "number",
+        validator: numberValidator,
+        sort: true,
+        formatter: (cellContent, row) => {
+          return(
+            <div><div  className="title-th" data-title="Valor Unitario: "></div>{Intl.NumberFormat().format(row.unitValue)}</div>
+          );}
+      },
+      {
+        dataField: "date",
+        text: "Fecha",
+        sort: true,
+        formatter: (cellContent, row) => {
+          const date = new Date(row.date)
+          const y= date.getFullYear();
+          const m = date.getMonth();
+          const d = date.getDay();
+          function n(n){ return n > 9 ? "" + n: "0" + n; }
+          return(
+              <div><div  className="title-th" data-title="Fecha: "></div>{y+"-"+n(m)+"-"+n(d)}</div>
+            );
+              }
+      },
+      {
+        dataField: "document",
+        text: "Documento",
+        validator: numberValidator,
+        sort: true,
+        formatter: (cellContent, row) => {
+          return(
+            <div><div  className="title-th" data-title="Documento: "></div>{row.document}</div>
+          );}
+      },
+      {
+        dataField: "client",
+        text: "Cliente",
+        sort: true,
+        formatter: (cellContent, row) => {
+          return(
+            <div><div  className="title-th" data-title="Cliente: "></div>{row.client}</div>
+          );}
+      },
+      {
+        dataField: "seller",
+        text: "Vendedor",
+        sort: true,
+        formatter: (cellContent, row) => {
+          return(
+            <div><div  className="title-th" data-title="Vendedor: "></div>{row.seller}</div>
+          );}
+      },
+    {
+      dataField: "stateSale",
       text: "Estado",
       sort: true,
-      validator: stateValidator,
+      validator:stateValidator,
       formatExtraData: state,
 
       formatter: (cellContent, row) => {
-        if(row.stateProduct===true)
+        if(row.stateSale.toLowerCase()==="entregado")
         return(
-          <div>
-          <div className="title-th" data-title="Estado: "></div><span className="status-p bg-success text-white">Disponible</span>
+          <div><div className="title-th" data-title="Estado: "></div><span className="status-p bg-success text-white">Entregado</span>
         </div>
         );
       
-      else if(row.stateProduct === false)
+      else if(row.stateSale.toLowerCase()==="cancelado")
         return(
-          <div>
-          <div className="title-th"data-title="Estado: " ></div><span className="status-p bg-danger text-white">No Disponible</span>
-        </div>
-        )
-      else
-      return(
-        <div>
-        <div className="title-th" data-title="Estado: " ></div><span className="status-p bg-warning text-white">{row.stateProduct}</span>
-      </div>)
-       
-        }
+          <div><div className="title-th" data-title="Estado: "></div>
+          <span className="status-p bg-danger text-white">Cancelado</span></div>
+        );
+        else if(row.stateSale.toLowerCase()==="en proceso")
+        return(
+          <div><div className="title-th" data-title="Estado: "></div> 
+          <span className="status-p bg-warning text-white">En proceso</span></div>
+        )}
     },
     {
       dataField: "state",
@@ -193,58 +248,53 @@ export default function ProductsTable() {
     },
     {
       dataField: "actions",
-      text: "Actiones",
+      text: "Acciones",
       editable: false,
       isDummyField: true,
       formatExtraData: state,
 
-      formatter: (cellContent, row,rowIndex) => {
+      formatter: (cellContent, row, rowIndex) => {
         if (row.state)
           return (
             <div className="action">
               <button className="btn btn-primary btn-xs"
                 onClick={() => {
+                  
+
+
                   setState(prev => {
                     row.state = null;
-                    
                     let newState = { ...prev, state: row.state, row: null };
+                    const value = row.unitValue*row.quantity;
+                    const save={sale:row.sale, description:row.description, value:value, quantity:row.quantity, unitValue:row.unitValue, date:row.date, document:row.document, client:row.client, seller:row.seller, stateSale:row.stateSale}
                     
-                    const stateProduct = cadenaABooleano(row.stateProduct);
-                    row.stateProduct= stateProduct;
-
-                    const save={product:row.product, description:row.description, price:row.price, stateProduct:stateProduct}
                     console.log(row._id + save)
                     handleEdit(row._id, save);
 
-                    setTitle("El producto: "+row.product)
-                    setMensaje("Fue actualizado correctamente.")
+                    setTitle("La venta: "+row.sale)
+                    setMensaje("Fue actualizada correctamente.")
                     setVariant("success")
                     setShowAlert(true);
-                    //alert("Producto actualizado correctamente.");
+                    //alert("Venta actualizado correctamente.");
                     return newState;
                   });
                 }}
-              ><FontAwesomeIcon icon={faSave} />
-                
+              ><FontAwesomeIcon icon={faSave} />      
               </button>
               <button
                 className="btn btn-danger btn-xs box" 
                 onClick={() => {
-                  setProducts(prev => {
+                  setSales(prev => {
                     let newVal = prev.map(el => {
-                      if (el._id === row._id) {
-                        row.stateProduct= cadenaABooleano(row.stateProduct);
+                      if (el.id === row._id) {
                         return state.oldValue;
-
                       }
                       return el;
                     });
                     return newVal;
                   });
-                  
                   setState(prev => {
                     row.state = null;
-                    row.stateProduct= cadenaABooleano(row.stateProduct);
                     let newState = { ...prev, state: row.state, row: null };
                     return newState;
                   });
@@ -257,10 +307,10 @@ export default function ProductsTable() {
           );
         else
           return (
-            <div className="action">
+            <div>
               <button
                 className="btn btn-danger btn-xs"
-                onClick={() => handleDelete(row._id, rowIndex)}
+                onClick={() => handleDelete(row._id,rowIndex)}
               >
                 <FontAwesomeIcon icon={faTrashAlt} />
                 
@@ -273,24 +323,19 @@ export default function ProductsTable() {
 
   const defaultSorted = [
     {
-      dataField: "product",
+      dataField: "sale",
       order: "asc"
     }
   ];
 
   // a function to save the old value
-
-
-
-
   const handleStartEdit = row => {
     setState(prev => {
-      row.stateProduct= cadenaABooleano(row.stateProduct);
       let newVal = { ...prev, oldValue: { ...row } };
-      
        return newVal;
     });
   };
+
   //edit
   const handleEdit =(id, data) => {  
     user.getIdToken(true).then(token => {
@@ -306,8 +351,9 @@ export default function ProductsTable() {
         .then(result => result.json())
         .then(
           (result) => {
-            setNewVal(newVal + 1);
+            console.log("Venta "+data.sale+" editada");
             console.log(result);
+            retrieveSales();
           },
           (error) => {
             console.log(error);
@@ -316,7 +362,6 @@ export default function ProductsTable() {
     });
  
        };
-
 
 
   //  delected the selected row
@@ -333,7 +378,9 @@ export default function ProductsTable() {
           .then(result => result.json())
           .then(
             (result) => {
-              retrieveProducts();
+              console.log("Venta borrada");
+            console.log(result);
+              retrieveSales();
             },
             (error) => {
               console.log(error);
@@ -341,13 +388,9 @@ export default function ProductsTable() {
           );
       });
   };
-
-
-  
-   const handleSaveAdd = ( product, description, unitValue, stateProduct) => {
-    stateProduct= cadenaABooleano(stateProduct);
-     const save ={product:product, description:description, stateProduct:stateProduct,price:unitValue }
-     user.getIdToken(true).then(token => {
+  const handleSaveAdd = (sale, description, value, quantity, unitValue, date, document, client, seller, stateSale) => {
+    const save={sale: sale, description: description, value: value, quantity: quantity, unitValue: unitValue, date: date, document: document, client: client, seller: seller, stateSale: stateSale}
+      user.getIdToken(true).then(token => {
       const requestOptions = {
         method: 'POST',
         headers: {
@@ -360,8 +403,10 @@ export default function ProductsTable() {
         .then(
           (response) => {
             response.json();
-            retrieveProducts();
-            setTitle("El producto: "+product)
+            console.log("Venta: "+sale+" agregada");
+            console.log(response);
+            retrieveSales();
+            setTitle("La venta: "+ sale)
             setMensaje("Fue registrado correctamente.")
                         setVariant("success")
                         setShowAlert(true);
@@ -377,7 +422,6 @@ export default function ProductsTable() {
     handleShow();
     
   };
-  
   return (
     <>
     <Row >
@@ -390,9 +434,9 @@ export default function ProductsTable() {
     />
       <Col> 
       <div className="add">
-        <Button onClick={handleNewRow}>
+        <Button variant="primary" onClick={handleNewRow}>
         <FontAwesomeIcon icon={faPlusCircle} />
-           <span className="buttonText">Agregar Producto</span>
+           <span className="buttonText">Agregar Venta</span>
         </Button>
       </div></Col>
       </Row>
@@ -400,7 +444,7 @@ export default function ProductsTable() {
   
   <ToolkitProvider 
   keyField="_id"
-  data={ products }
+  data={ sales }
   columns={ columns }
   search
 >
@@ -448,23 +492,18 @@ export default function ProductsTable() {
     )
   }
 </ToolkitProvider>
-
-
-
 </Row>
 <Row></Row>
 
 
-<NewProduct
+<NewSale
         show={show}
         onCancel={handleClose}
         onSave={handleSaveAdd}
-        id={products.length+1}
+        id={sales.length+1}
       />
-
-
-     
-     
     </>
   );
 }
+
+
