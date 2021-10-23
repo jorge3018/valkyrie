@@ -8,7 +8,7 @@ import paginationFactory from "react-bootstrap-table2-paginator";
 import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave,  faTrashAlt, faPlusCircle, faWindowClose} from '@fortawesome/free-solid-svg-icons'
-import { Row, Col } from "reactstrap";
+import { Row, Col, Spinner } from "reactstrap";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useHistory } from "react-router";
 import { getAuth } from "firebase/auth";
@@ -23,7 +23,7 @@ export default function SalesTable() {
   const [sales, setSales] = useState([]); // transformers sales
   const key =  sales.map(el => el._id);
   const auth = getAuth();
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(true);
   const [errors, setErrors] = useState(null);
   const [newVal, setNewVal] = useState(0);
   const [newDate, setNewDate] = useState(false);
@@ -66,7 +66,7 @@ export default function SalesTable() {
           .then(res => res.json())
           .then(
             (result) => {
-              setIsLoaded(true);
+              setIsLoaded(false);
               console.log("Lista de ventas cargada desde la base de datos");
               console.log(result);
               setSales(result); 
@@ -268,13 +268,9 @@ const stateValidator = (newValue, row, column) => {
                     const value = row.unitValue*row.quantity;
                     const save={sale:row.sale, description:row.description, value:value, quantity:row.quantity, unitValue:row.unitValue, date:row.date, document:row.document, client:row.client, seller:row.seller, stateSale:row.stateSale}
                     
-                    console.log(row._id + save)
                     handleEdit(row._id, save);
 
-                    setTitle("La venta: "+row.sale)
-                    setMensaje("Fue actualizada correctamente.")
-                    setVariant("success")
-                    setShowAlert(true);
+                   
                     //alert("Venta actualizado correctamente.");
                     return newState;
                   });
@@ -284,15 +280,7 @@ const stateValidator = (newValue, row, column) => {
               <button
                 className="btn btn-danger btn-xs box" 
                 onClick={() => {
-                  setSales(prev => {
-                    let newVal = prev.map(el => {
-                      if (el.id === row._id) {
-                        return state.oldValue;
-                      }
-                      return el;
-                    });
-                    return newVal;
-                  });
+                  retrieveSales();
                   setState(prev => {
                     row.state = null;
                     let newState = { ...prev, state: row.state, row: null };
@@ -307,7 +295,7 @@ const stateValidator = (newValue, row, column) => {
           );
         else
           return (
-            <div>
+            <div className="action">
               <button
                 className="btn btn-danger btn-xs"
                 onClick={() => handleDelete(row._id,rowIndex)}
@@ -353,6 +341,12 @@ const stateValidator = (newValue, row, column) => {
           (result) => {
             console.log("Venta "+data.sale+" editada");
             console.log(result);
+            setTitle("La venta: "+data.sale)
+            setMensaje("Fue actualizada correctamente.")
+            setVariant("success")
+            setShowAlert(true);
+            setTimeout(()=>(
+              handleCloseAlert()),5000);
             retrieveSales();
           },
           (error) => {
@@ -411,6 +405,9 @@ const stateValidator = (newValue, row, column) => {
                         setVariant("success")
                         setShowAlert(true);
             handleClose();
+            setTimeout(()=>(
+              handleCloseAlert()),5000);
+          
           },
           (error) => {
             
@@ -454,6 +451,13 @@ const stateValidator = (newValue, row, column) => {
         <SearchBar { ...props.searchProps } />
         <hr />
         <div className="Card">
+        {isLoaded ? (
+          <div className="center"> 
+            <Spinner size="sm" type="grow" color="dark"/>
+            <Spinner size="sm" type="grow" color="secondary"/>
+            <Spinner size="sm" type="grow" color="info"/>
+          </div>
+            ) :
         <BootstrapTable
           { ...props.baseProps }
           
@@ -487,7 +491,7 @@ const stateValidator = (newValue, row, column) => {
 
 
 
-        />
+        />}
       </div></div>
     )
   }
@@ -505,5 +509,4 @@ const stateValidator = (newValue, row, column) => {
     </>
   );
 }
-
 

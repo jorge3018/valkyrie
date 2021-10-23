@@ -196,9 +196,9 @@ export default function NewSaleform(props) {
                 </Col>
                 <Col>
                     <Form.Label><input  className="form-check-inline" 
-                        name="statesale"
+                        name="stateSale"
                         type="radio"
-                        value="cancelada"
+                        value="cancelado"
                     />  Cancelada</Form.Label>
                 <label> </label>    
                 </Col>

@@ -7,7 +7,7 @@ import paginationFactory from "react-bootstrap-table2-paginator";
 import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave,  faTrashAlt, faWindowClose} from '@fortawesome/free-solid-svg-icons'
-import { Row, Alert } from "reactstrap";
+import { Row, Alert, Spinner} from "reactstrap";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useHistory } from "react-router";
 import { getAuth } from "firebase/auth";
@@ -23,7 +23,7 @@ export default function UsersTable() {
 
   const auth = getAuth();
   
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(true);
   const [errors, setErrors] = useState(null);
   const [newVal, setNewVal] = useState(0);
   const [user, loading, error] = useAuthState(auth);
@@ -107,7 +107,7 @@ export default function UsersTable() {
         .then(res => res.json())
         .then(
           (result) => {
-            setIsLoaded(true);
+            setIsLoaded(false);
             console.log("Usuarios cargados desde la base de datos");
             console.log(result);
             setUsers(result); 
@@ -283,16 +283,8 @@ export default function UsersTable() {
                     
                     let newState = { ...prev, state: row.state, row: null };
                    
-                    const save={ stateUser:row.stateUser, rol:row.rol}
-                    console.log(row._id + save)
+                    const save={ user: row.user, stateUser:row.stateUser, rol:row.rol}
                     handleEdit(row._id, save);
-
-                    setTitle("El usuario: "+row.user)
-                    setMensaje("Fue actualizado correctamente.")
-                    setVariant("success")
-                    setShowAlert(true);
-
-
                     //alert("Usuario actualizado correctamente.");
                     return newState;
                   });
@@ -303,15 +295,7 @@ export default function UsersTable() {
               <button
                 className="btn btn-danger btn-xs box" 
                 onClick={() => {
-                  setUsers(prev => {
-                    let newVal = prev.map(el => {
-                      if (el.id === row._id) {
-                        return state.oldValue;
-                      }
-                      return el;
-                    });
-                    return newVal;
-                  });
+                  retrieveUsers();
                   setState(prev => {
                     row.state = null;
                     let newState = { ...prev, state: row.state, row: null };
@@ -369,8 +353,17 @@ const handleEdit =(id, data) => {
         .then(result => result.json())
         .then(
           (result) => {
-            setNewVal(newVal + 1);
+            console.log("El usuario: "+data.user+" Fue actualizado correctamente.")
+            console.log(id + data)
+            setTitle("El usuario: "+data.user)
+                    setMensaje("Fue actualizado correctamente.")
+                    setVariant("success")
+                    setShowAlert(true);
             console.log(result);
+            setTimeout(()=>(
+              handleCloseAlert()),5000);
+              retrieveUsers();
+
           },
           (error) => {
             console.log(error);
@@ -394,6 +387,7 @@ const handleEdit =(id, data) => {
           .then(result => result.json())
           .then(
             (result) => {
+              console.log("el usuario fue eliminado");
               retrieveUsers ();
             },
             (error) => {
@@ -434,6 +428,13 @@ const handleEdit =(id, data) => {
         <SearchBar { ...props.searchProps } />
         <hr />
         <div className="Card">
+        {isLoaded ? (
+          <div className="center"> 
+            <Spinner size="sm" type="grow" color="dark"/>
+            <Spinner size="sm" type="grow" color="secondary"/>
+            <Spinner size="sm" type="grow" color="info"/>
+          </div>
+            ) :
         <BootstrapTable
           { ...props.baseProps }
           
@@ -469,7 +470,7 @@ const handleEdit =(id, data) => {
 
 
         />
-      </div></div>
+        }</div></div>
     )
   }
 </ToolkitProvider>

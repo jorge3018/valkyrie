@@ -8,7 +8,7 @@ import paginationFactory from "react-bootstrap-table2-paginator";
 import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave,  faTrashAlt, faPlusCircle, faWindowClose} from '@fortawesome/free-solid-svg-icons'
-import { Row, Col } from "reactstrap";
+import { Row, Col, Spinner } from "reactstrap";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useHistory } from "react-router";
 import { getAuth } from "firebase/auth";
@@ -25,7 +25,7 @@ export default function ProductsTable() {
   const [products, setProducts] = useState([]); // transformers products
   const key =  products.map(el => el._id);
   const auth = getAuth();
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(true);
   const [errors, setErrors] = useState(null);
   const [newVal, setNewVal] = useState(0);
   const [user, loading, error] = useAuthState(auth);
@@ -68,7 +68,7 @@ export default function ProductsTable() {
         .then(res => res.json())
         .then(
           (result) => {
-            setIsLoaded(true);
+            setIsLoaded(false);
             console.log("productos cargados desde la base de datos");
             console.log(result);
             setProducts(result); 
@@ -213,13 +213,8 @@ export default function ProductsTable() {
                     row.stateProduct= stateProduct;
 
                     const save={product:row.product, description:row.description, price:row.price, stateProduct:stateProduct}
-                    console.log(row._id + save)
                     handleEdit(row._id, save);
-
-                    setTitle("El producto: "+row.product)
-                    setMensaje("Fue actualizado correctamente.")
-                    setVariant("success")
-                    setShowAlert(true);
+                   
                     //alert("Producto actualizado correctamente.");
                     return newState;
                   });
@@ -230,21 +225,9 @@ export default function ProductsTable() {
               <button
                 className="btn btn-danger btn-xs box" 
                 onClick={() => {
-                  setProducts(prev => {
-                    let newVal = prev.map(el => {
-                      if (el._id === row._id) {
-                        row.stateProduct= cadenaABooleano(row.stateProduct);
-                        return state.oldValue;
-
-                      }
-                      return el;
-                    });
-                    return newVal;
-                  });
-                  
+                  retrieveProducts();
                   setState(prev => {
                     row.state = null;
-                    row.stateProduct= cadenaABooleano(row.stateProduct);
                     let newState = { ...prev, state: row.state, row: null };
                     return newState;
                   });
@@ -306,8 +289,17 @@ export default function ProductsTable() {
         .then(result => result.json())
         .then(
           (result) => {
-            setNewVal(newVal + 1);
+            console.log("El producto: "+data.product+" Fue actualizado correctamente.")
+            console.log(id + data)
+            setTitle("El producto: "+data.product)
+            setMensaje("Fue actualizado correctamente.")
+            setVariant("success")
+            setShowAlert(true);
+            setTimeout(()=>(
+            handleCloseAlert()),5000);
             console.log(result);
+            retrieveProducts();
+
           },
           (error) => {
             console.log(error);
@@ -333,6 +325,7 @@ export default function ProductsTable() {
           .then(result => result.json())
           .then(
             (result) => {
+              console.log("El producto Fue eliminado correctamente.")
               retrieveProducts();
             },
             (error) => {
@@ -366,6 +359,8 @@ export default function ProductsTable() {
                         setVariant("success")
                         setShowAlert(true);
             handleClose();
+            setTimeout(()=>(
+              handleCloseAlert()),5000);
           },
           (error) => {
             
@@ -410,6 +405,13 @@ export default function ProductsTable() {
         <SearchBar { ...props.searchProps } />
         <hr />
         <div className="Card">
+        {isLoaded ? (
+          <div className="center"> 
+            <Spinner size="sm" type="grow" color="dark"/>
+            <Spinner size="sm" type="grow" color="secondary"/>
+            <Spinner size="sm" type="grow" color="info"/>
+          </div>
+            ) :
         <BootstrapTable
           { ...props.baseProps }
           
@@ -443,7 +445,7 @@ export default function ProductsTable() {
 
 
 
-        />
+        /> }
       </div></div>
     )
   }
